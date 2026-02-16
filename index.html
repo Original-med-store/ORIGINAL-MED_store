@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORIGINAL_MED store</title>
+    <link rel="stylesheet" href="styles/index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="#" class="logo">ORIGINAL_MED store <i class="fas fa-heartbeat"></i></a>
+            <ul class="nav-links">
+                <li><a href="#home" class="active">الرئيسية</a></li>
+                <li><a href="#products">المنتجات</a></li>
+                <li><a href="#about">من نحن</a></li>
+                <li><a href="#contact">اتصل بنا</a></li>
+            </ul>
+            <div class="nav-icons">
+                <div class="cart-icon" onclick="toggleCart()">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cart-count">0</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header id="home" class="hero">
+        <div class="hero-content">
+            <h1>رعاية صحية أفضل لحياة أفضل</h1>
+            <p>أحدث المعدات الطبية والمستلزمات بأفضل الأسعار. جودة عالية وضمان شامل.</p>
+            <a href="#products" class="btn btn-primary">تصفح المنتجات</a>
+        </div>
+    </header>
+
+    <!-- Products Section -->
+    <section id="products" class="products">
+        <div class="container">
+            <h2 class="section-title">أحدث المنتجات</h2>
+            <div class="product-grid" id="product-grid">
+                <!-- Products will be injected here by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <div class="contact-wrapper">
+                <h2 class="section-title">تواصل معنا</h2>
+                <div class="contact-content">
+                    <div class="contact-card">
+                        <i class="fas fa-phone-alt contact-icon"></i>
+                        <h3>أرقام الهاتف</h3>
+                        <p><a href="tel:01062037919">01062037919</a></p>
+                        <p><a href="tel:01501882143">01501882143</a></p>
+                    </div>
+                    <div class="contact-card">
+                        <i class="fab fa-facebook contact-icon"></i>
+                        <h3>صفحتنا على فيسبوك</h3>
+                        <a href="https://www.facebook.com/share/1cKhZxpH9B/" target="_blank"
+                            class="btn btn-primary">زيارة الصفحة</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-sidebar" id="cart-sidebar">
+        <div class="cart-header">
+            <h3>سلة المشتريات</h3>
+            <button class="close-cart" onclick="toggleCart()">&times;</button>
+        </div>
+        <div class="cart-items" id="cart-items">
+            <!-- Cart items will be injected here -->
+            <div class="empty-cart-msg">السلة فارغة</div>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>المجموع:</span>
+                <span id="cart-total-price">0.00 ج.م</span>
+            </div>
+            <button class="btn btn-primary btn-block" onclick="checkout()">إتمام الشراء</button>
+        </div>
+    </div>
+    <div class="cart-overlay" onclick="toggleCart()"></div>
+
+    <!-- Product Modal -->
+    <div class="modal" id="product-modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <div class="modal-body" id="modal-body">
+                <!-- Product details will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div class="modal" id="checkout-modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeCheckout()">&times;</span>
+            <h3>إتمام الطلب</h3>
+            <form id="checkout-form">
+                <div class="form-group">
+                    <label>الاسم الكامل</label>
+                    <input type="text" required>
+                </div>
+                <div class="form-group">
+                    <label>رقم الهاتف</label>
+                    <input type="tel" required>
+                </div>
+                <div class="form-group">
+                    <label>العنوان</label>
+                    <textarea required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">تأكيد الطلب</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="scripts/products.js"></script>
+    <script src="scripts/app.js"></script>
+</body>
+
+</html>
