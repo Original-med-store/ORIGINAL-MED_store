@@ -4,6 +4,7 @@ import json
 import re
 import os
 import shutil
+import subprocess
 
 # Paths
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -251,7 +252,19 @@ class StoreManagerApp:
 
             self.refresh_table()
             self.save_to_file()
-            messagebox.showinfo("نجاح", "تم حفظ التعديلات")
+            self.publish_changes() # Auto-publish
+            messagebox.showinfo("نجاح", "تم حفظ التعديلات ونشرها للموقع!")
+
+    def publish_changes(self):
+        def run_publish():
+            try:
+                publish_script = os.path.join(BASE_DIR, 'publish_store_silent.bat')
+                subprocess.run([publish_script], shell=True, check=True)
+            except Exception as e:
+                print(f"Error publishing: {e}")
+        
+        import threading
+        threading.Thread(target=run_publish).start()
 
     def save_to_file(self):
         # Convert back to JS format
