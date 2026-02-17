@@ -34,17 +34,29 @@ function setupEventListeners() {
     });
 }
 
+// Arabic normalization for search
+function normalizeArabic(text) {
+    if (!text) return "";
+    return text
+        .replace(/[أإآ]/g, 'ا')
+        .replace(/ة/g, 'ه')
+        .replace(/ى/g, 'ي')
+        .replace(/[ًٌٍَُِّْ]/g, ''); // Remove diacritics
+}
+
 function handleSearch(query) {
-    const term = query.toLowerCase().trim();
+    const term = normalizeArabic(query.trim().toLowerCase());
+
     if (!term) {
         renderProducts(products);
         return;
     }
 
-    const filtered = products.filter(p =>
-        p.name.toLowerCase().includes(term) ||
-        (p.description && p.description.toLowerCase().includes(term))
-    );
+    const filtered = products.filter(p => {
+        const name = normalizeArabic(p.name.toLowerCase());
+        const desc = p.description ? normalizeArabic(p.description.toLowerCase()) : "";
+        return name.includes(term) || desc.includes(term);
+    });
 
     renderProducts(filtered);
 }
