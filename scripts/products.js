@@ -11,8 +11,8 @@ var products = [
     },
     {
         "name": "شفاط",
-        "price": 1000,
-        "old_price": 1500,
+        "price": 5,
+        "old_price": 1000,
         "description": "شفاط شافلاةىوو",
         "image": "assets/12.jpg",
         "images": [
