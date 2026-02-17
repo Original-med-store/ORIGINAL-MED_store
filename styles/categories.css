@@ -1,57 +1,161 @@
-/* Categories Section */
-.categories {
-    padding: 3rem 0;
-    margin-top: -50px;
-    position: relative;
-    z-index: 20;
-}
-
-.category-grid {
+/* Main Layout Grid */
+.main-layout {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1.5rem;
-    justify-content: center;
+    grid-template-columns: 260px 1fr;
+    gap: 2rem;
+    padding: 2rem 0;
+    align-items: start;
 }
 
-.category-card {
+/* Sidebar */
+.category-sidebar {
     background: var(--white);
     border-radius: var(--radius);
-    overflow: hidden;
-    text-align: center;
-    box-shadow: var(--shadow-md);
-    transition: var(--transition);
+    padding: 1rem;
+    box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: 90px;
+    border: 1px solid #f1f5f9;
+}
+
+.sidebar-header {
+    border-bottom: 2px solid #f1f5f9;
+    padding-bottom: 0.8rem;
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sidebar-header h3 {
+    font-size: 1.1rem;
+    color: var(--text-dark);
+    margin: 0;
+}
+
+/* Category List Items */
+.category-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.category-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0.8rem;
+    border-radius: 6px;
     cursor: pointer;
-    border: 2px solid transparent;
+    transition: all 0.2s;
+    border-right: 3px solid transparent;
 }
 
-.category-card:hover,
-.category-card.active {
-    transform: translateY(-5px);
-    border-color: var(--primary-color);
-    box-shadow: var(--shadow-lg);
+.category-item:hover {
+    background-color: #f8fafc;
+    color: var(--primary-color);
 }
 
-.category-img-container {
-    width: 100%;
-    height: 120px;
+.category-item.active {
+    background-color: #f0fdfa;
+    /* Light Teal */
+    color: var(--primary-color);
+    border-right-color: var(--primary-color);
+    font-weight: 700;
+}
+
+/* Small Icons/Thumbnails - No huge images */
+.category-img-container,
+.category-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
     overflow: hidden;
-    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
 .category-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.3s;
 }
 
-.category-card:hover .category-img {
-    transform: scale(1.1);
+.category-icon {
+    color: var(--text-light);
+    font-size: 1rem;
+}
+
+.category-item.active .category-icon {
+    color: var(--primary-color);
 }
 
 .category-name {
-    padding: 1rem;
-    font-weight: 700;
-    color: var(--text-dark);
-    font-size: 1rem;
+    font-size: 0.95rem;
+}
+
+/* Clear Filters Helper */
+.clear-filter-btn {
+    font-size: 0.8rem;
+    color: var(--accent-color);
+    cursor: pointer;
+    display: none;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .main-layout {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 1rem 0;
+    }
+
+    .category-sidebar {
+        position: static;
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .sidebar-header {
+        display: none;
+        /* Hide header on mobile to save space */
+    }
+
+    .category-list {
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 5px;
+        gap: 0.5rem;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .category-item {
+        flex: 0 0 auto;
+        background: var(--white);
+        border: 1px solid #e2e8f0;
+        border-right: 1px solid #e2e8f0;
+        /* Reset border */
+        border-radius: 50px;
+        padding: 0.5rem 1rem;
+    }
+
+    .category-item.active {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+
+    .category-item.active .category-icon {
+        color: white;
+    }
+
+    .category-img-container,
+    .category-icon {
+        width: 20px;
+        height: 20px;
+    }
 }

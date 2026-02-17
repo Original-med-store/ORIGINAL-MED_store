@@ -64,50 +64,71 @@ function handleSearch(query) {
 }
 
 // Render Categories
+// Render Categories
 function renderCategories() {
-    const grid = document.getElementById('category-grid');
-    if (!grid) return;
+    const container = document.getElementById('category-list');
+    if (!container) return;
 
     if (!categories || categories.length === 0) {
-        document.getElementById('categories').style.display = 'none';
+        container.innerHTML = '<p style="padding:1rem; color:#666; font-size:0.9rem;">لا توجد أقسام</p>';
         return;
     }
 
-    grid.innerHTML = categories.map(cat => `
-        <div class="category-card" onclick="filterByCategory(${cat.id}, this)">
+    // Add "All" option
+    let html = `
+        <div class="category-item active" onclick="filterByCategory('all', this)">
+            <div class="category-icon"><i class="fas fa-th-large"></i></div>
+            <div class="category-name">الكل</div>
+        </div>
+    `;
+
+    html += categories.map(cat => `
+        <div class="category-item" onclick="filterByCategory(${cat.id}, this)">
             <div class="category-img-container">
                 <img src="${cat.image}" alt="${cat.name}" class="category-img">
             </div>
             <div class="category-name">${cat.name}</div>
         </div>
     `).join('');
+
+    container.innerHTML = html;
 }
 
 function filterByCategory(catId, cardElement) {
     // Active class logic
-    document.querySelectorAll('.category-card').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.category-item').forEach(c => c.classList.remove('active'));
     if (cardElement) cardElement.classList.add('active');
 
     // Filter
     if (catId === 'all') {
         renderProducts(products);
     } else {
-        const filtered = products.filter(p => p.category_id === catId);
-        renderProducts(filtered);
+        const filtered = products.filter(p => p.category_id === parseInt(catId) || p.category_id === String(catId));
+        // Handle potentially string vs number mismatch
+
+        renderProducts(filtered, 'لا توجد منتجات في هذا القسم حالياً');
     }
 
-    // Scroll to products
-    document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+    // Scroll to products on mobile only
+    if (window.innerWidth < 992) {
+        document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+    }
 }
 
 // Render Products
-function renderProducts(items) {
-    if (items.length === 0) {
-        productGrid.innerHTML = '<div style="text-align:center; grid-column: 1/-1; padding: 2rem; color: #666;">لا توجد منتجات تطابق بحثك</div>';
+function renderProducts(items, emptyMessage = 'لا توجد منتجات متاحة') {
+    const grid = document.getElementById('product-grid');
+    if (!grid) return;
+
+    if (!items || items.length === 0) {
+        grid.innerHTML = `<div style="text-align:center; grid-column: 1/-1; padding: 3rem; color: #64748b;">
+            <i class="fas fa-box-open" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+            <p>${emptyMessage}</p>
+        </div>`;
         return;
     }
 
-    productGrid.innerHTML = items.map(product => {
+    grid.innerHTML = items.map(product => {
         let priceHtml = '';
         if (product.old_price && product.old_price > product.price) {
             const discount = Math.round(((product.old_price - product.price) / product.old_price) * 100);
