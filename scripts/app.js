@@ -60,7 +60,7 @@ function handleSearch(query) {
     });
 
     renderProducts(filtered);
-    renderProducts(filtered);
+
 }
 
 // Render Categories
