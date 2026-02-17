@@ -242,6 +242,15 @@
                     <label><i class="fas fa-map-marker-alt"></i> العنوان بالتفصيل</label>
                     <textarea placeholder="المحافظة، المدينة، الشارع..." required></textarea>
                 </div>
+                <div class="form-group">
+                    <label><i class="fas fa-money-bill-wave"></i> طريقة الدفع المفضلة</label>
+                    <select id="payment-method"
+                        style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px;">
+                        <option value="الدفع عند الاستلام">الدفع عند الاستلام (Cash)</option>
+                        <option value="فودافون كاش">فودافون كاش (Vodafone Cash)</option>
+                        <option value="انستا باي">انستا باي (InstaPay)</option>
+                    </select>
+                </div>
                 <button type="submit" class="btn btn-primary btn-block">تأكيد الطلب عبر واتساب <i
                         class="fab fa-whatsapp"></i></button>
             </form>

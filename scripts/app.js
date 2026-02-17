@@ -392,6 +392,7 @@ if (document.getElementById('checkout-form')) {
         const name = this.querySelector('input[type="text"]').value;
         const phone = this.querySelector('input[type="tel"]').value;
         const address = this.querySelector('textarea').value;
+        const paymentMethod = document.getElementById('payment-method').value;
 
         // 2. تجهيز تفاصيل الطلب
         let message = `*طلب جديد من متجر ORIGINAL_MED*\n`;
@@ -399,6 +400,7 @@ if (document.getElementById('checkout-form')) {
         message += `*الاسم:* ${name}\n`;
         message += `*الهاتف:* ${phone}\n`;
         message += `*العنوان:* ${address}\n`;
+        message += `*طريقة الدفع:* ${paymentMethod}\n`;
         message += `----------------------------\n`;
         message += `*الطلبات:* \n`;
 
