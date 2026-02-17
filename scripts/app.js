@@ -15,6 +15,7 @@ const searchBtn = document.getElementById('search-btn');
 
 // Initialize
 function init() {
+    renderCategories();
     renderProducts(products); // Render all initially
     updateCartUI();
     setupEventListeners();
@@ -59,6 +60,44 @@ function handleSearch(query) {
     });
 
     renderProducts(filtered);
+    renderProducts(filtered);
+}
+
+// Render Categories
+function renderCategories() {
+    const grid = document.getElementById('category-grid');
+    if (!grid) return;
+
+    if (!categories || categories.length === 0) {
+        document.getElementById('categories').style.display = 'none';
+        return;
+    }
+
+    grid.innerHTML = categories.map(cat => `
+        <div class="category-card" onclick="filterByCategory(${cat.id}, this)">
+            <div class="category-img-container">
+                <img src="${cat.image}" alt="${cat.name}" class="category-img">
+            </div>
+            <div class="category-name">${cat.name}</div>
+        </div>
+    `).join('');
+}
+
+function filterByCategory(catId, cardElement) {
+    // Active class logic
+    document.querySelectorAll('.category-card').forEach(c => c.classList.remove('active'));
+    if (cardElement) cardElement.classList.add('active');
+
+    // Filter
+    if (catId === 'all') {
+        renderProducts(products);
+    } else {
+        const filtered = products.filter(p => p.category_id === catId);
+        renderProducts(filtered);
+    }
+
+    // Scroll to products
+    document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
 }
 
 // Render Products

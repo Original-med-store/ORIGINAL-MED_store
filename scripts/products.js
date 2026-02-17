@@ -36,3 +36,5 @@ var products = [
         "id": 3
     }
 ];
+
+var categories = [];
