@@ -762,77 +762,36 @@ footer .container {
     overflow-y: auto;
 }
 
-/* Slider */
-.slider-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.slider-img {
-    max-width: 100%;
-    max-height: 300px;
-    object-fit: contain;
-}
-
-.modal-single-img {
-    max-width: 100%;
-    max-height: 350px;
-    object-fit: contain;
-}
-
-/* Slider (Modal) - Keeping existing z-index fix */
-.slider-btn {
+/* Card Arrows */
+.card-arrow {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.8);
     border: 1px solid rgba(0, 0, 0, 0.1);
     color: var(--primary-color);
-    width: 45px;
-    height: 45px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     cursor: pointer;
-    font-size: 1.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    z-index: 5;
     transition: var(--transition);
-    z-index: 10;
 }
 
-.slider-btn:hover {
+.card-arrow:hover {
     background: var(--primary-color);
     color: white;
-    transform: translateY(-50%) scale(1.1);
 }
 
-.slider-btn.prev {
+.card-arrow.prev {
     left: 10px;
 }
 
-.slider-btn.next {
+.card-arrow.next {
     right: 10px;
-}
-
-.slider-dots {
-    margin-top: 1rem;
-    display: flex;
-    gap: 0.5rem;
-}
-
-.dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #cbd5e1;
-    cursor: pointer;
-    transition: var(--transition);
 }
 
 .dot.active {

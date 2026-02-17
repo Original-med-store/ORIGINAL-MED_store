@@ -83,38 +83,23 @@ function renderProducts(items) {
             priceHtml = `<div class="product-price">${product.price} ج.م</div>`;
         }
 
-        // Determine images
-        let images = [];
-        if (product.images && product.images.length > 0) {
-            images = product.images;
-        } else {
-            images = [product.image];
-        }
+        // Image Handling
+        let images = product.images && product.images.length > 0 ? product.images : [product.image];
+        let arrowsHtml = '';
 
-        // Slider HTML
-        let imageHtml = '';
         if (images.length > 1) {
-            imageHtml = `
-                <div class="card-slider" id="slider-${product.id}">
-                    <button class="card-slider-btn prev" onclick="moveCardSlide(event, ${product.id}, -1)">&#10094;</button>
-                    ${images.map((img, idx) => `<img src="${img}" class="card-img ${idx === 0 ? 'active' : ''}" data-index="${idx}">`).join('')}
-                    <button class="card-slider-btn next" onclick="moveCardSlide(event, ${product.id}, 1)">&#10095;</button>
-                    <div class="card-dots">
-                        ${images.map((_, idx) => `<span class="card-dot ${idx === 0 ? 'active' : ''}"></span>`).join('')}
-                    </div>
-                </div>
-            `;
-        } else {
-            imageHtml = `
-                <div class="image-container">
-                    <img src="${images[0]}" alt="${product.name}" class="product-image" onclick="openProductModal(${product.id})">
-                </div>
+            arrowsHtml = `
+                <button class="card-arrow prev" onclick="changeCardImage(event, ${product.id}, -1)">&#10094;</button>
+                <button class="card-arrow next" onclick="changeCardImage(event, ${product.id}, 1)">&#10095;</button>
             `;
         }
 
         return `
         <div class="product-card">
-            ${imageHtml}
+            <div class="image-container" style="position: relative;">
+                 <img src="${images[0]}" alt="${product.name}" class="product-image" id="img-${product.id}" onclick="openProductModal(${product.id})" data-img-index="0">
+                 ${arrowsHtml}
+            </div>
             <div class="product-info">
                 <div>
                     <h3 class="product-title" onclick="openProductModal(${product.id})">${product.name}</h3>
@@ -131,29 +116,20 @@ function renderProducts(items) {
     `}).join('');
 }
 
-function moveCardSlide(event, productId, step) {
-    event.stopPropagation(); // Stop click from opening modal
-    const slider = document.getElementById(`slider-${productId}`);
-    const images = slider.querySelectorAll('.card-img');
-    const dots = slider.querySelectorAll('.card-dot');
+function changeCardImage(event, productId, step) {
+    event.stopPropagation(); // Prevent modal opening
+    const imgElement = document.getElementById(`img-${productId}`);
+    let currentIndex = parseInt(imgElement.getAttribute('data-img-index'));
 
-    let activeIndex = 0;
-    images.forEach((img, idx) => {
-        if (img.classList.contains('active')) {
-            activeIndex = idx;
-            img.classList.remove('active');
-        }
-    });
+    const product = products.find(p => p.id === productId);
+    const images = product.images && product.images.length > 0 ? product.images : [product.image];
 
-    let nextIndex = activeIndex + step;
+    let nextIndex = currentIndex + step;
     if (nextIndex >= images.length) nextIndex = 0;
     if (nextIndex < 0) nextIndex = images.length - 1;
 
-    images[nextIndex].classList.add('active');
-
-    // Update dots
-    dots.forEach(dot => dot.classList.remove('active'));
-    if (dots[nextIndex]) dots[nextIndex].classList.add('active');
+    imgElement.src = images[nextIndex];
+    imgElement.setAttribute('data-img-index', nextIndex);
 }
 
 // Cart Functions
