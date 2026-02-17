@@ -26,6 +26,8 @@ if %errorlevel% equ 0 (
 
 if %errorlevel% equ 0 (
     echo %date% %time% - Publish successful >> publish.log
+    exit /b 0
 ) else (
     echo %date% %time% - Publish failed >> publish.log
+    exit /b 1
 )

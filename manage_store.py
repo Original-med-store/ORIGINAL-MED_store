@@ -43,8 +43,16 @@ class StoreManagerApp:
         header_frame = tk.Frame(self.root, bg="#0d9488", pady=15)
         header_frame.pack(fill="x")
         
-        title_label = tk.Label(header_frame, text="لوحة تحكم المنتجات الاحترافية", bg="#0d9488", fg="white", font=("Cairo", 18, "bold"))
-        title_label.pack()
+        # Flex container for header
+        header_content = tk.Frame(header_frame, bg="#0d9488")
+        header_content.pack(expand=True, fill="x", padx=20)
+        
+        title_label = tk.Label(header_content, text="لوحة تحكم المنتجات الاحترافية", bg="#0d9488", fg="white", font=("Cairo", 18, "bold"))
+        title_label.pack(side="right")
+
+        # Global Publish Button
+        btn_publish = tk.Button(header_content, text="⟳ نشر التعديلات للموقع", command=self.publish_changes, bg="#f59e0b", fg="white", font=("Cairo", 11, "bold"), padx=15)
+        btn_publish.pack(side="left")
 
     def create_main_layout(self):
         # Notebook for Tabs
@@ -165,7 +173,7 @@ class StoreManagerApp:
         ttk.Separator(scrollable_frame, orient='horizontal').pack(fill='x', pady=20, padx=10)
 
         # Action Buttons
-        btn_save = tk.Button(scrollable_frame, text="حفظ التعديلات ونشر", command=self.save_products, bg="#0d9488", fg="white", font=("Cairo", 12, "bold"), pady=5)
+        btn_save = tk.Button(scrollable_frame, text="حفظ تعديلات المنتج", command=self.save_products, bg="#0d9488", fg="white", font=("Cairo", 12, "bold"), pady=5)
         btn_save.pack(fill="x", padx=10, pady=5)
 
         btn_add = tk.Button(scrollable_frame, text="إضافة منتج جديد", command=self.add_product, bg="#10b981", fg="white", font=("Cairo", 11, "bold"))
@@ -369,7 +377,8 @@ class StoreManagerApp:
         self.refresh_product_table()
         self.save_to_file()
         self.clear_product_form()
-        messagebox.showinfo("نجاح", "تم إضافة المنتج بنجاح")
+        if messagebox.askyesno("نجاح", "تم إضافة المنتج. هل تريد نشره الآن؟"):
+             self.publish_changes()
 
     def save_products(self):
         selected = self.tree.focus()
@@ -398,6 +407,8 @@ class StoreManagerApp:
             self.refresh_product_table()
             self.save_to_file()
             self.clear_product_form()
+            if messagebox.askyesno("تم", "تم الحذف. هل تريد نشر التعديلات الآن؟"):
+                self.publish_changes()
 
     # --- Category Logic ---
     def on_category_select(self, event):
@@ -458,7 +469,8 @@ class StoreManagerApp:
         self.update_cat_combo()
         self.save_to_file()
         self.clear_cat_form()
-        messagebox.showinfo("نجاح", "تم حفظ القسم")
+        if messagebox.askyesno("نجاح", "تم حفظ القسم. هل تريد نشر التعديلات الآن؟"):
+            self.publish_changes()
 
     def delete_category(self):
         selection = self.cat_listbox.curselection()
@@ -471,6 +483,8 @@ class StoreManagerApp:
             self.update_cat_combo()
             self.save_to_file()
             self.clear_cat_form()
+            if messagebox.askyesno("تم", "تم الحذف. هل تريد نشر التعديلات الآن؟"):
+                self.publish_changes()
 
     # --- Common ---
     def process_images(self, image_list):
@@ -511,6 +525,28 @@ class StoreManagerApp:
 
         with open(PRODUCTS_FILE, 'w', encoding='utf-8') as f:
             f.write(js_content)
+
+    def publish_changes(self):
+        try:
+            # Show loading/info message
+            self.root.config(cursor="wait")
+            self.root.update()
+            
+            script_path = os.path.join(BASE_DIR, 'publish_store_silent.bat')
+            
+            # Run the batch script
+            result = subprocess.run([script_path], capture_output=True, text=True, creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
+            
+            self.root.config(cursor="")
+            
+            if result.returncode == 0:
+                messagebox.showinfo("نجاح", "تم حفظ التعديلات ونشرها على الموقع بنجاح!\nقد يستغرق التحديث دقيقة أو دقيقتين للظهور اونلاين.")
+            else:
+                messagebox.showerror("خطأ", f"حدث خطأ أثناء النشر:\n{result.stderr}")
+                
+        except Exception as e:
+            self.root.config(cursor="")
+            messagebox.showerror("خطأ", f"فشل تشغيل سكربت النشر:\n{str(e)}")
 
 if __name__ == "__main__":
     root = tk.Tk()

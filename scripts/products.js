@@ -17,18 +17,16 @@ var products = [
         ]
     },
     {
-        "name": "شفاط",
-        "price": 300,
-        "old_price": 1000,
-        "description": "جهاز سكر",
-        "image": "assets/12.jpg",
+        "name": "جهاز سكر بايو تست",
+        "price": 350,
+        "old_price": 400,
+        "description": "جهاز سكر بايو تيست فشيخ",
+        "image": "assets/images.jpeg",
         "images": [
-            "assets/12.jpg",
-            "assets/3333.jpg",
-            "assets/ahmed Goda  Dhcp 4.PNG"
+            "assets/images.jpeg"
         ],
         "id": 2,
-        "category_id": null
+        "category_id": 1
     },
     {
         "name": "شفاط",
@@ -41,7 +39,22 @@ var products = [
             "assets/3333.jpg",
             "assets/ahmed Goda  Dhcp 4.PNG"
         ],
-        "id": 3
+        "id": 3,
+        "category_id": 2
+    },
+    {
+        "name": "شفاط",
+        "price": 5,
+        "old_price": 1000,
+        "description": "شفاط شافلاةىوو",
+        "category_id": 2,
+        "image": "assets/12.jpg",
+        "images": [
+            "assets/12.jpg",
+            "assets/3333.jpg",
+            "assets/ahmed Goda  Dhcp 4.PNG"
+        ],
+        "id": 4
     }
 ];
 
