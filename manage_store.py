@@ -18,55 +18,68 @@ if not os.path.exists(ASSETS_DIR):
 class StoreManagerApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("مدير متجر ORIGINAL_MED")
-        self.root.geometry("800x600")
-        self.root.configure(bg="#f4f4f4")
+        self.root.title("مدير متجر ORIGINAL_MED - النسخة المطورة")
+        self.root.geometry("1000x700") # Increased size
+        self.root.configure(bg="#f8fafc")
 
         # Style
         self.style = ttk.Style()
         self.style.theme_use('clam')
-        self.style.configure("TLabel", font=("Cairo", 12))
-        self.style.configure("TButton", font=("Cairo", 11))
+        self.style.configure("TLabel", font=("Cairo", 11), background="#f8fafc")
+        self.style.configure("TButton", font=("Cairo", 10, "bold"))
         self.style.configure("Treeview.Heading", font=("Cairo", 11, "bold"))
-        self.style.configure("Treeview", font=("Cairo", 10), rowheight=30)
+        self.style.configure("Treeview", font=("Cairo", 10), rowheight=35)
 
         # Variables
         self.products = []
-        self.selected_image_path = None
+        self.selected_images = [] # List of paths
 
         # UI Components
         self.create_header()
-        self.create_table()
-        self.create_form()
+        self.create_main_layout()
         
         # Load Data
         self.load_products()
 
     def create_header(self):
-        header_frame = tk.Frame(self.root, bg="#008080", pady=10)
+        header_frame = tk.Frame(self.root, bg="#0d9488", pady=15)
         header_frame.pack(fill="x")
         
-        title_label = tk.Label(header_frame, text="لوحة تحكم المنتجات", bg="#008080", fg="white", font=("Cairo", 16, "bold"))
+        title_label = tk.Label(header_frame, text="لوحة تحكم المنتجات الاحترافية", bg="#0d9488", fg="white", font=("Cairo", 18, "bold"))
         title_label.pack()
 
-    def create_table(self):
-        table_frame = tk.Frame(self.root, bg="#f4f4f4", padx=10, pady=10)
-        table_frame.pack(fill="both", expand=True)
+    def create_main_layout(self):
+        # Split into Left (Form) and Right (Table)
+        main_pane = tk.PanedWindow(self.root, orient=tk.HORIZONTAL, bg="#f8fafc")
+        main_pane.pack(fill="both", expand=True, padx=10, pady=10)
 
-        columns = ("ID", "الاسم", "السعر", "الوصف")
-        self.tree = ttk.Treeview(table_frame, columns=columns, show="headings", selectmode="browse")
+        # Table Side (Right) - stored on left visually due to RTL? No, let's stick to standard layout
+        # Let's put Form on Right (since it's Arabic) and Table on Left
+        
+        table_frame = tk.Frame(main_pane, bg="white")
+        form_frame = tk.Frame(main_pane, bg="#f8fafc")
+        
+        main_pane.add(table_frame, width=500)
+        main_pane.add(form_frame, width=450)
+
+        self.create_table(table_frame)
+        self.create_form(form_frame)
+
+    def create_table(self, parent):
+        columns = ("ID", "الاسم", "السعر", "السعر القديم")
+        self.tree = ttk.Treeview(parent, columns=columns, show="headings", selectmode="browse")
         
         self.tree.heading("ID", text="ID")
         self.tree.heading("الاسم", text="اسم المنتج")
-        self.tree.heading("السعر", text="السعر")
-        self.tree.heading("الوصف", text="الوصف")
+        self.tree.heading("السعر", text="السعر الحالي")
+        self.tree.heading("السعر القديم", text="السعر السابق")
         
-        self.tree.column("ID", width=50, anchor="center")
-        self.tree.column("الاسم", width=200, anchor="e")
-        self.tree.column("السعر", width=100, anchor="center")
-        self.tree.column("الوصف", width=400, anchor="e")
+        self.tree.column("ID", width=40, anchor="center")
+        self.tree.column("الاسم", width=180, anchor="e")
+        self.tree.column("السعر", width=80, anchor="center")
+        self.tree.column("السعر القديم", width=80, anchor="center")
 
-        scrollbar = ttk.Scrollbar(table_frame, orient="vertical", command=self.tree.yview)
+        scrollbar = ttk.Scrollbar(parent, orient="vertical", command=self.tree.yview)
         self.tree.configure(yscroll=scrollbar.set)
         
         self.tree.pack(side="left", fill="both", expand=True)
@@ -74,72 +87,105 @@ class StoreManagerApp:
 
         self.tree.bind("<<TreeviewSelect>>", self.on_select)
 
-    def create_form(self):
-        form_frame = tk.LabelFrame(self.root, text="بيانات المنتج", font=("Cairo", 12), bg="#f4f4f4", padx=10, pady=10)
-        form_frame.pack(fill="x", padx=10, pady=10)
+    def create_form(self, parent):
+        # Scrollable Form
+        canvas = tk.Canvas(parent, bg="#f8fafc", highlightthickness=0)
+        scrollbar = ttk.Scrollbar(parent, orient="vertical", command=canvas.yview)
+        scrollable_frame = tk.Frame(canvas, bg="#f8fafc")
 
-        # Grid Layout
-        tk.Label(form_frame, text="اسم المنتج:", bg="#f4f4f4").grid(row=0, column=3, sticky="e", padx=5)
+        scrollable_frame.bind(
+            "<Configure>",
+            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+        )
+
+        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw", width=430)
+        canvas.configure(yscrollcommand=scrollbar.set)
+
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+
+        # Content
+        font_lbl = ("Cairo", 11, "bold")
+        font_ent = ("Cairo", 10)
+
+        # Name
+        tk.Label(scrollable_frame, text="اسم المنتج:", font=font_lbl, bg="#f8fafc").pack(anchor="e", pady=(10,0), padx=10)
         self.name_var = tk.StringVar()
-        tk.Entry(form_frame, textvariable=self.name_var, justify="right", font=("Cairo", 10)).grid(row=0, column=2, sticky="ew", padx=5)
+        tk.Entry(scrollable_frame, textvariable=self.name_var, justify="right", font=font_ent).pack(fill="x", padx=10)
 
-        tk.Label(form_frame, text="السعر (ج.م):", bg="#f4f4f4").grid(row=0, column=1, sticky="e", padx=5)
+        # Prices Row
+        price_frame = tk.Frame(scrollable_frame, bg="#f8fafc")
+        price_frame.pack(fill="x", padx=10, pady=5)
+
+        tk.Label(price_frame, text="السعر الحالي:", font=font_lbl, bg="#f8fafc").pack(side="right")
         self.price_var = tk.StringVar()
-        tk.Entry(form_frame, textvariable=self.price_var, justify="center", font=("Cairo", 10)).grid(row=0, column=0, sticky="ew", padx=5)
+        tk.Entry(price_frame, textvariable=self.price_var, justify="center", font=font_ent, width=10).pack(side="right", padx=5)
 
-        tk.Label(form_frame, text="الوصف:", bg="#f4f4f4").grid(row=1, column=3, sticky="ne", padx=5, pady=5)
-        self.desc_text = tk.Text(form_frame, height=3, width=40, font=("Cairo", 10))
-        self.desc_text.grid(row=1, column=0, columnspan=3, sticky="ew", padx=5, pady=5)
+        tk.Label(price_frame, text="السعر السابق (للخصم):", font=font_lbl, bg="#f8fafc", fg="#dc2626").pack(side="right", padx=(10,0))
+        self.old_price_var = tk.StringVar()
+        tk.Entry(price_frame, textvariable=self.old_price_var, justify="center", font=font_ent, width=10).pack(side="right", padx=5)
 
-        # Image Selection
-        tk.Label(form_frame, text="صورة المنتج:", bg="#f4f4f4").grid(row=2, column=3, sticky="e", padx=5)
-        self.image_label = tk.Label(form_frame, text="لم يتم اختيار صورة", fg="gray", bg="#f4f4f4")
-        self.image_label.grid(row=2, column=2, sticky="w", padx=5)
-        tk.Button(form_frame, text="اختر صورة", command=self.choose_image).grid(row=2, column=1, padx=5)
+        # Description
+        tk.Label(scrollable_frame, text="الوصف:", font=font_lbl, bg="#f8fafc").pack(anchor="e", pady=(10,0), padx=10)
+        self.desc_text = tk.Text(scrollable_frame, height=4, font=font_ent)
+        self.desc_text.pack(fill="x", padx=10)
 
-        # Buttons
-        btn_frame = tk.Frame(self.root, bg="#f4f4f4", pady=10)
-        btn_frame.pack(fill="x")
+        # Images
+        tk.Label(scrollable_frame, text="صور المنتج (يمكن اختيار أكثر من صورة):", font=font_lbl, bg="#f8fafc").pack(anchor="e", pady=(10,0), padx=10)
+        btn_img = tk.Button(scrollable_frame, text="إضافة صور", command=self.choose_images, bg="#3b82f6", fg="white", font=("Cairo", 10))
+        btn_img.pack(anchor="e", padx=10, pady=5)
+        
+        self.images_listbox = tk.Listbox(scrollable_frame, height=4, font=("Segoe UI", 9))
+        self.images_listbox.pack(fill="x", padx=10)
+        
+        btn_del_img = tk.Button(scrollable_frame, text="حذف الصورة المحددة", command=self.remove_selected_image, bg="#ef4444", fg="white", font=("Cairo", 9))
+        btn_del_img.pack(anchor="w", padx=10, pady=2)
 
-        tk.Button(btn_frame, text="حفظ التعديلات", command=self.save_products, bg="#008080", fg="white", width=15).pack(side="right", padx=10)
-        tk.Button(btn_frame, text="إضافة منتج جديد", command=self.add_product, bg="#20c997", fg="white", width=15).pack(side="right", padx=10)
-        tk.Button(btn_frame, text="حذف المحدد", command=self.delete_product, bg="#dc3545", fg="white", width=15).pack(side="left", padx=10)
-        tk.Button(btn_frame, text="تفريغ الحقول", command=self.clear_form, bg="#6c757d", fg="white", width=15).pack(side="left", padx=10)
+        # Separator
+        ttk.Separator(scrollable_frame, orient='horizontal').pack(fill='x', pady=20, padx=10)
+
+        # Action Buttons
+        btn_save = tk.Button(scrollable_frame, text="حفظ التعديلات ونشر", command=self.save_products, bg="#0d9488", fg="white", font=("Cairo", 12, "bold"), pady=5)
+        btn_save.pack(fill="x", padx=10, pady=5)
+
+        btn_add = tk.Button(scrollable_frame, text="إضافة منتج جديد", command=self.add_product, bg="#10b981", fg="white", font=("Cairo", 11, "bold"))
+        btn_add.pack(fill="x", padx=10, pady=5)
+
+        sub_btn_frame = tk.Frame(scrollable_frame, bg="#f8fafc")
+        sub_btn_frame.pack(fill="x", padx=10, pady=5)
+        
+        tk.Button(sub_btn_frame, text="حذف المنتج", command=self.delete_product, bg="#dc2626", fg="white").pack(side="left", fill="x", expand=True, padx=2)
+        tk.Button(sub_btn_frame, text="تفريغ الحقول", command=self.clear_form, bg="#64748b", fg="white").pack(side="right", fill="x", expand=True, padx=2)
+
 
     def load_products(self):
         if not os.path.exists(PRODUCTS_FILE):
-            messagebox.showerror("خطأ", "ملف المنتجات غير موجود!")
             return
 
         try:
             with open(PRODUCTS_FILE, 'r', encoding='utf-8') as f:
                 content = f.read()
 
-            # Extract list using regex because it's a JS file, not pure JSON
             match = re.search(r'var products = (\[.*?\]);', content, re.DOTALL)
             if match:
                 json_str = match.group(1)
-                # Fix keys to be quoted for valid JSON (e.g. id: 1 -> "id": 1)
-                # This is a simple regex fix, might need more robustness for complex strings
+                # Cleaning to ensure valid JSON
                 json_str = re.sub(r'(\w+):\s', r'"\1": ', json_str)
-                # Cleaning potential trailing commas which JSON doesn't like but JS does
                 json_str = re.sub(r',\s*]', ']', json_str)
                 json_str = re.sub(r',\s*}', '}', json_str)
                 
                 self.products = json.loads(json_str)
                 self.refresh_table()
-            else:
-                 messagebox.showerror("خطأ", "لم يتم العثور على قائمة المنتجات في الملف.")
-
         except Exception as e:
-            messagebox.showerror("خطأ", f"حدث خطأ أثناء قراءة الملف:\n{e}")
+            messagebox.showerror("خطأ", f"Error loading data: {e}")
 
     def refresh_table(self):
         for row in self.tree.get_children():
             self.tree.delete(row)
         
         for product in self.products:
-            self.tree.insert("", "end", values=(product.get("id"), product.get("name"), product.get("price"), product.get("description")))
+            old_p = product.get("old_price", "")
+            self.tree.insert("", "end", values=(product.get("id"), product.get("name"), product.get("price"), old_p))
 
     def on_select(self, event):
         selected = self.tree.focus()
@@ -153,59 +199,100 @@ class StoreManagerApp:
         if product:
             self.name_var.set(product["name"])
             self.price_var.set(product["price"])
+            self.old_price_var.set(product.get("old_price", ""))
             self.desc_text.delete("1.0", tk.END)
             self.desc_text.insert("1.0", product["description"])
-            self.selected_image_path = product["image"]
-            self.image_label.config(text=os.path.basename(product["image"]))
+            
+            # Handle Images
+            self.selected_images = []
+            self.images_listbox.delete(0, tk.END)
+            
+            # Support legacy 'image' field or new 'images' list
+            if "images" in product and isinstance(product["images"], list):
+                self.selected_images = product["images"]
+            elif "image" in product:
+                self.selected_images = [product["image"]]
+            
+            for img in self.selected_images:
+                self.images_listbox.insert(tk.END, os.path.basename(img))
 
-    def choose_image(self):
-        file_path = filedialog.askopenfilename(filetypes=[("Image Files", "*.jpg;*.png;*.jpeg")])
-        if file_path:
-            self.selected_image_path = file_path
-            self.image_label.config(text=os.path.basename(file_path))
+    def choose_images(self):
+        file_paths = filedialog.askopenfilenames(filetypes=[("Image Files", "*.jpg;*.png;*.jpeg;*.webp")])
+        if file_paths:
+            for path in file_paths:
+                if path not in self.selected_images:
+                    self.selected_images.append(path)
+                    self.images_listbox.insert(tk.END, os.path.basename(path))
+
+    def remove_selected_image(self):
+        selection = self.images_listbox.curselection()
+        if selection:
+            idx = selection[0]
+            self.images_listbox.delete(idx)
+            del self.selected_images[idx]
 
     def clear_form(self):
         self.name_var.set("")
         self.price_var.set("")
+        self.old_price_var.set("")
         self.desc_text.delete("1.0", tk.END)
-        self.selected_image_path = None
-        self.image_label.config(text="لم يتم اختيار صورة")
+        self.selected_images = []
+        self.images_listbox.delete(0, tk.END)
         self.tree.selection_remove(self.tree.selection())
 
-    def add_product(self):
-        name = self.name_var.get()
-        price = self.price_var.get()
-        desc = self.desc_text.get("1.0", tk.END).strip()
-
-        if not name or not price:
-            messagebox.showwarning("تنبيه", "يرجى إدخال الاسم والسعر")
-            return
-
-        # Image Handling
-        final_image_path = "https://via.placeholder.com/300" # Default
-        if self.selected_image_path:
-            if not self.selected_image_path.startswith("http"):
-                # Copy local file
-                filename = os.path.basename(self.selected_image_path)
-                dest_path = os.path.join(ASSETS_DIR, filename)
-                try:
-                    shutil.copy(self.selected_image_path, dest_path)
-                    final_image_path = f"assets/{filename}"
-                except:
-                    pass
+    def process_images(self, image_list):
+        processed_images = []
+        for img_path in image_list:
+            if img_path.startswith("http") or img_path.startswith("assets/"):
+                processed_images.append(img_path)
             else:
-                final_image_path = self.selected_image_path
+                # Local file needs to be copied
+                try:
+                    filename = os.path.basename(img_path)
+                    dest_path = os.path.join(ASSETS_DIR, filename)
+                    shutil.copy(img_path, dest_path)
+                    processed_images.append(f"assets/{filename}")
+                except Exception as e:
+                    print(f"Error copying image {img_path}: {e}")
+        
+        # Fallback if empty
+        if not processed_images:
+             processed_images.append("https://via.placeholder.com/300")
+             
+        return processed_images
 
-        new_id = max([p["id"] for p in self.products] or [0]) + 1
-        new_product = {
-            "id": new_id,
+    def get_form_data(self):
+        name = self.name_var.get().strip()
+        price = self.price_var.get().strip()
+        old_price = self.old_price_var.get().strip()
+        desc = self.desc_text.get("1.0", tk.END).strip()
+        
+        if not name or not price:
+            messagebox.showwarning("تنبيه", "الاسم والسعر مطلوبان")
+            return None
+
+        # Determine single image (for backward compatibility) and list
+        final_images = self.process_images(self.selected_images)
+        main_image = final_images[0] if final_images else "https://via.placeholder.com/300"
+        
+        data = {
             "name": name,
             "price": int(price),
-            "image": final_image_path,
-            "description": desc
+            "old_price": int(old_price) if old_price else None,
+            "description": desc,
+            "image": main_image,     # Main image for cards
+            "images": final_images   # All images for slider
         }
+        return data
+
+    def add_product(self):
+        data = self.get_form_data()
+        if not data: return
+
+        new_id = max([p["id"] for p in self.products] or [0]) + 1
+        data["id"] = new_id
         
-        self.products.append(new_product)
+        self.products.append(data)
         self.refresh_table()
         self.save_to_file()
         self.clear_form()
@@ -213,8 +300,7 @@ class StoreManagerApp:
 
     def delete_product(self):
         selected = self.tree.focus()
-        if not selected:
-            return
+        if not selected: return
         
         if messagebox.askyesno("تأكيد", "هل أنت متأكد من حذف هذا المنتج؟"):
             product_id = int(self.tree.item(selected, 'values')[0])
@@ -224,77 +310,55 @@ class StoreManagerApp:
             self.clear_form()
 
     def save_products(self):
-        # Update existing product
         selected = self.tree.focus()
-        if not selected:
-            return
+        if not selected: return
 
         product_id = int(self.tree.item(selected, 'values')[0])
         product = next((p for p in self.products if p["id"] == product_id), None)
         
         if product:
-            product["name"] = self.name_var.get()
-            product["price"] = int(self.price_var.get())
-            product["description"] = self.desc_text.get("1.0", tk.END).strip()
+            data = self.get_form_data()
+            if not data: return
             
-            # Update image if changed
-            if self.selected_image_path and self.selected_image_path != product["image"]:
-                 if not self.selected_image_path.startswith("http") and not self.selected_image_path.startswith("assets/"):
-                    filename = os.path.basename(self.selected_image_path)
-                    dest_path = os.path.join(ASSETS_DIR, filename)
-                    try:
-                        shutil.copy(self.selected_image_path, dest_path)
-                        product["image"] = f"assets/{filename}"
-                    except:
-                        pass
-                 else:
-                     product["image"] = self.selected_image_path
-
+            product.update(data)
+            
             self.refresh_table()
             self.save_to_file()
-            self.publish_changes() # Auto-publish
-            messagebox.showinfo("نجاح", "تم حفظ التعديلات ونشرها للموقع!")
+            self.publish_changes()
 
+    def publish_changes(self):
         def run_publish():
             try:
                 publish_script = os.path.join(BASE_DIR, 'publish_store_silent.bat')
-                # Run and capture output
                 result = subprocess.run([publish_script], shell=True, capture_output=True, text=True)
                 
                 if result.returncode == 0:
-                    self.root.after(0, lambda: messagebox.showinfo("نجاح", "تم نشر التعديلات على الموقع بنجاح!\nقد يستغرق ظهور التعديلات بضع دقائق."))
+                    self.root.after(0, lambda: messagebox.showinfo("نجاح", "تم النشر بنجاح!"))
                 else:
-                    self.root.after(0, lambda: messagebox.showerror("خطأ في النشر", f"فشل نشر التعديلات:\n{result.stderr}\nراجع ملف publish.log للمزيد من التفاصيل."))
+                    self.root.after(0, lambda: messagebox.showerror("خطأ", f"فشل النشر:\n{result.stderr}"))
             except Exception as e:
-                self.root.after(0, lambda: messagebox.showerror("خطأ", f"حدث خطأ غير متوقع أثناء النشر:\n{e}"))
+                self.root.after(0, lambda: messagebox.showerror("خطأ", str(e)))
         
         import threading
         # Run in background to not freeze UI
         threading.Thread(target=run_publish, daemon=True).start()
 
     def save_to_file(self):
-        # Convert back to JS format
         js_content = "// ==========================================\n"
-        js_content += "//  ملف بيانات المنتجات (يتم تحديثه تلقائيًا)\n"
+        js_content += "//  ملف بيانات المنتجات (محدث)\n"
         js_content += "// ==========================================\n"
         js_content += "var products = " + json.dumps(self.products, ensure_ascii=False, indent=4) + ";"
         
-        # simple hack to remove quotes from keys if needed, but JS accepts quotes keys too. 
-        # keeping it valid JSON inside JS is safer for this parser.
-        
+        # Update index.html version for caching
         import time
         try:
             index_path = os.path.join(BASE_DIR, 'index.html')
             with open(index_path, 'r', encoding='utf-8') as f:
                 content = f.read()
-            
-            # Regex to find the script tag and update the timestamp
             new_content = re.sub(r'scripts/products.js(\?v=\d+)?', f'scripts/products.js?v={int(time.time())}', content)
-            
             with open(index_path, 'w', encoding='utf-8') as f:
                 f.write(new_content)
-        except Exception as e:
-            print(f"Error updating index version: {e}")
+        except: pass
 
         with open(PRODUCTS_FILE, 'w', encoding='utf-8') as f:
             f.write(js_content)
