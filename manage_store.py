@@ -255,16 +255,22 @@ class StoreManagerApp:
             self.publish_changes() # Auto-publish
             messagebox.showinfo("نجاح", "تم حفظ التعديلات ونشرها للموقع!")
 
-    def publish_changes(self):
         def run_publish():
             try:
                 publish_script = os.path.join(BASE_DIR, 'publish_store_silent.bat')
-                subprocess.run([publish_script], shell=True, check=True)
+                # Run and capture output
+                result = subprocess.run([publish_script], shell=True, capture_output=True, text=True)
+                
+                if result.returncode == 0:
+                    self.root.after(0, lambda: messagebox.showinfo("نجاح", "تم نشر التعديلات على الموقع بنجاح!\nقد يستغرق ظهور التعديلات بضع دقائق."))
+                else:
+                    self.root.after(0, lambda: messagebox.showerror("خطأ في النشر", f"فشل نشر التعديلات:\n{result.stderr}\nراجع ملف publish.log للمزيد من التفاصيل."))
             except Exception as e:
-                print(f"Error publishing: {e}")
+                self.root.after(0, lambda: messagebox.showerror("خطأ", f"حدث خطأ غير متوقع أثناء النشر:\n{e}"))
         
         import threading
-        threading.Thread(target=run_publish).start()
+        # Run in background to not freeze UI
+        threading.Thread(target=run_publish, daemon=True).start()
 
     def save_to_file(self):
         # Convert back to JS format
@@ -276,6 +282,20 @@ class StoreManagerApp:
         # simple hack to remove quotes from keys if needed, but JS accepts quotes keys too. 
         # keeping it valid JSON inside JS is safer for this parser.
         
+        import time
+        try:
+            index_path = os.path.join(BASE_DIR, 'index.html')
+            with open(index_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+            
+            # Regex to find the script tag and update the timestamp
+            new_content = re.sub(r'scripts/products.js(\?v=\d+)?', f'scripts/products.js?v={int(time.time())}', content)
+            
+            with open(index_path, 'w', encoding='utf-8') as f:
+                f.write(new_content)
+        except Exception as e:
+            print(f"Error updating index version: {e}")
+
         with open(PRODUCTS_FILE, 'w', encoding='utf-8') as f:
             f.write(js_content)
 
