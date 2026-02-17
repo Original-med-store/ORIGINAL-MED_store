@@ -83,11 +83,38 @@ function renderProducts(items) {
             priceHtml = `<div class="product-price">${product.price} ج.م</div>`;
         }
 
+        // Determine images
+        let images = [];
+        if (product.images && product.images.length > 0) {
+            images = product.images;
+        } else {
+            images = [product.image];
+        }
+
+        // Slider HTML
+        let imageHtml = '';
+        if (images.length > 1) {
+            imageHtml = `
+                <div class="card-slider" id="slider-${product.id}">
+                    <button class="card-slider-btn prev" onclick="moveCardSlide(event, ${product.id}, -1)">&#10094;</button>
+                    ${images.map((img, idx) => `<img src="${img}" class="card-img ${idx === 0 ? 'active' : ''}" data-index="${idx}">`).join('')}
+                    <button class="card-slider-btn next" onclick="moveCardSlide(event, ${product.id}, 1)">&#10095;</button>
+                    <div class="card-dots">
+                        ${images.map((_, idx) => `<span class="card-dot ${idx === 0 ? 'active' : ''}"></span>`).join('')}
+                    </div>
+                </div>
+            `;
+        } else {
+            imageHtml = `
+                <div class="image-container">
+                    <img src="${images[0]}" alt="${product.name}" class="product-image" onclick="openProductModal(${product.id})">
+                </div>
+            `;
+        }
+
         return `
         <div class="product-card">
-            <div class="image-container">
-                 <img src="${product.image}" alt="${product.name}" class="product-image" onclick="openProductModal(${product.id})">
-            </div>
+            ${imageHtml}
             <div class="product-info">
                 <div>
                     <h3 class="product-title" onclick="openProductModal(${product.id})">${product.name}</h3>
@@ -102,6 +129,31 @@ function renderProducts(items) {
             </div>
         </div>
     `}).join('');
+}
+
+function moveCardSlide(event, productId, step) {
+    event.stopPropagation(); // Stop click from opening modal
+    const slider = document.getElementById(`slider-${productId}`);
+    const images = slider.querySelectorAll('.card-img');
+    const dots = slider.querySelectorAll('.card-dot');
+
+    let activeIndex = 0;
+    images.forEach((img, idx) => {
+        if (img.classList.contains('active')) {
+            activeIndex = idx;
+            img.classList.remove('active');
+        }
+    });
+
+    let nextIndex = activeIndex + step;
+    if (nextIndex >= images.length) nextIndex = 0;
+    if (nextIndex < 0) nextIndex = images.length - 1;
+
+    images[nextIndex].classList.add('active');
+
+    // Update dots
+    dots.forEach(dot => dot.classList.remove('active'));
+    if (dots[nextIndex]) dots[nextIndex].classList.add('active');
 }
 
 // Cart Functions

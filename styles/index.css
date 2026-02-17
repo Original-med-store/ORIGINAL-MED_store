@@ -657,93 +657,52 @@ footer .container {
     background-color: var(--accent-color);
     color: white;
     font-size: 0.75rem;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-weight: bold;
 }
 
-.product-desc {
-    font-size: 0.85rem;
-    color: #666;
-    margin-bottom: 0.5rem;
-    height: 40px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
+.close-modal {
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    opacity: 0.8;
 }
 
-/* Product Modal Styles */
-.product-modal-content {
-    max-width: 800px;
-    width: 95%;
-    padding: 0;
+.close-modal:hover {
+    opacity: 1;
 }
 
-.modal-product-details {
-    display: flex;
-    gap: 2rem;
+#checkout-form {
     padding: 2rem;
 }
 
-.modal-gallery {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f8fafc;
-    border-radius: 8px;
-    min-height: 300px;
-}
-
-.modal-info {
-    flex: 1;
-}
-
-.modal-info h2 {
-    font-size: 1.8rem;
-    margin-bottom: 1rem;
-    color: var(--text-dark);
-}
-
-.product-price.large {
-    font-size: 1.5rem;
+.form-group {
     margin-bottom: 1.5rem;
 }
 
-.product-full-desc {
-    color: var(--text-light);
-    line-height: 1.8;
-    margin-bottom: 2rem;
-    max-height: 200px;
-    overflow-y: auto;
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-dark);
 }
 
-/* Slider */
-.slider-container {
-    position: relative;
+.form-group input,
+.form-group textarea {
     width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    padding: 0.75rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s;
 }
 
-.slider-img {
-    max-width: 100%;
-    max-height: 300px;
-    object-fit: contain;
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
 }
 
-.modal-single-img {
-    max-width: 100%;
-    max-height: 350px;
-    object-fit: contain;
-}
-
+/* Slider (Modal) - Keeping existing z-index fix */
 .slider-btn {
     position: absolute;
     top: 50%;
