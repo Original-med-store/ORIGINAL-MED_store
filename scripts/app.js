@@ -144,6 +144,7 @@ function addToCart(productId) {
     }
 
     updateCartUI();
+    toggleCart(true); // Open cart automatically
 
     // Feedback animation
     const btn = document.querySelector(`button[onclick="addToCart(${productId})"]`);
