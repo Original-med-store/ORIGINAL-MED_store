@@ -33,20 +33,6 @@ var products = [
         "price": 5,
         "old_price": 1000,
         "description": "شفاط شافلاةىوو",
-        "image": "assets/12.jpg",
-        "images": [
-            "assets/12.jpg",
-            "assets/3333.jpg",
-            "assets/ahmed Goda  Dhcp 4.PNG"
-        ],
-        "id": 3,
-        "category_id": 2
-    },
-    {
-        "name": "شفاط",
-        "price": 5,
-        "old_price": 1000,
-        "description": "شفاط شافلاةىوو",
         "category_id": 2,
         "image": "assets/12.jpg",
         "images": [
