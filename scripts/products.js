@@ -40,10 +40,5 @@ var categories = [
         "id": 2,
         "name": "العنايه بالام",
         "image": "assets/3333.jpg"
-    },
-    {
-        "id": 3,
-        "name": "ؤمنتجات خاصه بالامهات والرضاعة",
-        "image": "assets/3333.jpg"
     }
 ];
