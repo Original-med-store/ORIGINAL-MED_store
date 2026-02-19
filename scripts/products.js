@@ -38,7 +38,7 @@ var categories = [
     },
     {
         "id": 2,
-        "name": "العنايه بالام",
+        "name": "ؤالعنايه بالام",
         "image": "assets/3333.jpg"
     }
 ];
