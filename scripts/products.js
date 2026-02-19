@@ -40,5 +40,10 @@ var categories = [
         "id": 2,
         "name": "ؤالعنايه بالام",
         "image": "assets/3333.jpg"
+    },
+    {
+        "id": 3,
+        "name": "منتجات خاصة بالامهات والرضاعة",
+        "image": "assets/3333.jpg"
     }
 ];
