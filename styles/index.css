@@ -821,6 +821,8 @@ main {
 
 .product-price.old {
     text-decoration: line-through;
+    color: #dc2626;
+    /* Professional Red */
 }
 
 .discount-badge {

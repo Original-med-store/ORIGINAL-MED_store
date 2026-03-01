@@ -35,6 +35,16 @@ function init() {
     updateCartUI();
     setupEventListeners();
     loadCustomerData();
+
+    // Feature Request: Categories panel should be always visible (Open by Default)
+    const catPanel = document.getElementById('categoriesPanel');
+    const openCategoriesBtn = document.getElementById('openCategoriesBtn');
+    if (catPanel) {
+        catPanel.classList.add('show');
+    }
+    if (openCategoriesBtn) {
+        openCategoriesBtn.classList.add('active-btn');
+    }
 }
 
 // Render Categories
@@ -177,6 +187,17 @@ function changeCardImage(event, productId, step) {
     let nextIndex = currentIndex + step;
     if (nextIndex >= images.length) nextIndex = 0;
     if (nextIndex < 0) nextIndex = images.length - 1;
+
+    // Feature Request: Preload all images to prevent slow switching
+    if (!product._imagesPreloaded) {
+        images.forEach(src => {
+            if (src && !src.includes('placeholder')) {
+                const img = new Image();
+                img.src = src;
+            }
+        });
+        product._imagesPreloaded = true;
+    }
 
     imgElement.src = images[nextIndex];
     imgElement.setAttribute('data-img-index', nextIndex);
