@@ -284,3 +284,16 @@ hint: 'git pull' before pushing again.
 hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 Mon 03/02/2026  0:32:10.78 - Publish failed 
 Mon 03/02/2026  0:32:23.71 - Starting publish... 
+warning: in the working copy of 'publish.log', LF will be replaced by CRLF the next time Git touches it
+[main a6cd0d0] Auto-update from Store Manager
+ 1 file changed, 13 insertions(+)
+To https://github.com/Original-med-store/ORIGINAL-MED_store.git
+ ! [rejected]        main -> main (fetch first)
+error: failed to push some refs to 'https://github.com/Original-med-store/ORIGINAL-MED_store.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+Mon 03/02/2026  0:32:26.37 - Publish failed 
+Mon 03/02/2026  1:01:29.04 - Starting publish... 
