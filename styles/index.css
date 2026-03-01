@@ -819,9 +819,10 @@ main {
     color: #7f8c8d;
 }
 
-.product-price.old {
+.product-price.old,
+#modalProductOldPrice {
     text-decoration: line-through;
-    color: #dc2626;
+    color: #dc2626 !important;
     /* Professional Red */
 }
 
