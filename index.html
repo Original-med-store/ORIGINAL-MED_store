@@ -4,263 +4,450 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر ORIGINAL_MED - للمستلزمات الطبية</title>
+    <title>Original MED | متجر المستلزمات والأجهزة الطبية</title>
+
+    <!-- SEO & Search Engine Optimization -->
     <meta name="description"
         content="متجر ORIGINAL_MED يوفر أرقى المستلزمات الطبية والأجهزة التعويضية بأفضل الأسعار. تسوق الآن واحصل على منتجات أصلية وشحن سريع لجميع المحافظات.">
+    content="متجر Original MED يوفر أحدث الأجهزة الطبية ومستلزمات العناية الصحية بأفضل الأسعار.">
     <meta name="keywords" content="مستلزمات طبية, أجهزة طبية, ORIGINAL_MED, رعاية صحية, معدات طبية, شراء اونلاين, مصر">
-    <meta name="author" content="ORIGINAL_MED">
+    <meta name="author" content="Original MED">
 
     <!-- Open Graph for Social Media -->
-    <meta property="og:title" content="متجر ORIGINAL_MED - للمستلزمات الطبية">
-    <meta property="og:description"
-        content="تسوق أحدث الأجهزة والمستلزمات الطبية بأفضل الأسعار. جودة مضمونة وشحن سريع.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://original-med-store.vercel.app/"> <!-- Changed for Vercel -->
+    <meta property="og:title" content="Original MED">
+    <meta property="og:description" content="تسوق أفضل المستلزمات والأجهزة الطبية من Original MED.">
     <meta property="og:image"
         content="https://images.unsplash.com/photo-1631217868264-e5b90bb7e13c?q=80&w=2091&auto=format&fit=crop">
-    <meta property="og:url" content="https://original-med-store.github.io/ORIGINAL-MED_store/">
-    <meta property="og:type" content="website">
 
-    <link rel="stylesheet" href="styles/index.css?v=1740000001">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Original MED">
+    <meta name="twitter:description"
+        content="تسوق أحدث الأجهزة والمستلزمات الطبية بأفضل الأسعار. جودة مضمونة وشحن سريع.">
+    <meta name="twitter:image"
+        content="https://images.unsplash.com/photo-1631217868264-e5b90bb7e13c?q=80&w=2091&auto=format&fit=crop">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles/index.css?v=2">
 </head>
 
 <body>
 
-    <!-- Top Bar -->
-    <div class="top-bar">
-        <div class="container">
-            <div class="contact-info">
-                <span><i class="fas fa-phone"></i> 01062037919</span>
-                <span><i class="fas fa-envelope"></i> info@originalmed.com</span>
+    <!-- Header & Hero Section -->
+    <header class="hero-section">
+        <div class="glass-nav">
+            <div class="logo">
+                <i class="fa-solid fa-heartbeat text-gradient"></i>
+                <span>ORIGINAL <span class="text-light">MED</span></span>
             </div>
-            <div class="social-links">
-                <a href="https://www.facebook.com/share/1cKhZxpH9B/" target="_blank"><i
-                        class="fab fa-facebook-f"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-                <a href="https://wa.me/201068672360" target="_blank"><i class="fab fa-whatsapp"></i></a>
+            <div class="nav-links">
+                <a href="#" class="active">الرئيسية</a>
+                <a href="#catalog">المتجر</a>
+                <a href="#" onclick="toggleContactSheet(); return false;">تواصل معنا</a>
+                <button class="auth-btn" id="navAuthBtn" onclick="toggleAuthModal('login')">
+                    <i class="fa-solid fa-user"></i> دخول
+                </button>
             </div>
-        </div>
-    </div>
-
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="container">
-            <a href="#" class="logo">
-                <i class="fas fa-heartbeat"></i>
-                <span>ORIGINAL_MED</span>
-            </a>
-
-            <div class="search-box">
-                <input type="text" id="search-input" placeholder="ابحث عن منتج...">
-                <button id="search-btn"><i class="fas fa-search"></i></button>
-            </div>
-
-            <div class="nav-actions">
-                <div class="cart-icon" onclick="toggleCart()">
-                    <i class="fas fa-shopping-bag"></i>
-                    <span id="cart-count">0</span>
+            <!-- Search Box (Moved up for mobile sticky header like Amazon) -->
+            <div class="search-container" style="position: relative; flex: 1; max-width: 500px; margin: 0 20px;">
+                <div class="search-box" style="margin: 0; max-width: 100%;">
+                    <i class="fa-solid fa-search desktop-icon"></i>
+                    <input type="text" id="search-input" placeholder="بحث في Original MED" autocomplete="off">
+                    <button id="search-btn"><i class="fa-solid fa-search"></i><span>بحث</span></button>
                 </div>
-                <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
+                <!-- Live Search Dropdown -->
+                <div id="searchResultsDropdown" class="search-dropdown hidden"></div>
             </div>
         </div>
-    </nav>
 
-    <!-- Hero Section -->
-    <header id="home" class="hero">
-        <div class="hero-overlay"></div>
-        <div class="container hero-content">
-            <div class="hero-text">
-                <h1>رعاية صحية موثوقة <br> لحياة أفضل</h1>
-                <p>نوفر لك أحدث الأجهزة والمستلزمات الطبية بأعلى معايير الجودة. تسوق الآن واحصل على أفضل العروض.</p>
-                <div class="hero-btns">
-                    <a href="#products" class="btn btn-primary">تصفح المنتجات <i class="fas fa-arrow-left"></i></a>
-                    <a href="#contact" class="btn btn-outline">تواصل معنا</a>
+        <!-- Mobile Logo Bar (under search) -->
+        <div class="mobile-sub-header">
+            <div class="logo">
+                <i class="fa-solid fa-heartbeat text-gradient"></i>
+                <span>ORIGINAL <span class="text-light">MED</span></span>
+            </div>
+        </div>
+
+        <div class="hero-content">
+            <h1 class="bounce-in">أرقى المستلزمات الطبية <br><span class="text-gradient">بين يديك</span></h1>
+            <p class="fade-in desktop-only-text">نوفر لك أحدث الأجهزة والمستلزمات الطبية بأعلى معايير الجودة للرعاية
+                الشخصية والمنزلية.</p>
+            <div class="hero-features fade-in">
+                <div class="hero-badge">
+                    <i class="fa-solid fa-shield-alt"></i>
+                    <span>جودة مضمونة 100%</span>
+                </div>
+                <div class="hero-badge highlight-green">
+                    <i class="fa-solid fa-headset"></i>
+                    <span>دعم فني واستشارات</span>
+                </div>
+                <div class="hero-badge highlight-yellow">
+                    <i class="fa-solid fa-truck-fast"></i>
+                    <span>شحن سريع لجميع المحافظات</span>
                 </div>
             </div>
         </div>
+
+        <!-- Animated Background Shapes -->
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
     </header>
 
-    <!-- Features Section -->
-    <section class="features">
-        <div class="container">
-            <div class="feature-box">
-                <i class="fas fa-truck"></i>
-                <h3>شحن سريع</h3>
-                <p>توصيل لجميع المحافظات</p>
-            </div>
-            <div class="feature-box">
-                <i class="fas fa-shield-alt"></i>
-                <h3>جودة مضمونة</h3>
-                <p>منتجات أصلية 100%</p>
-            </div>
-            <div class="feature-box">
-                <i class="fas fa-headset"></i>
-                <h3>دعم فني</h3>
-                <p>متواجدون للرد على استفساراتكم</p>
-            </div>
-            <div class="feature-box">
-                <i class="fas fa-tags"></i>
-                <h3>أفضل الأسعار</h3>
-                <p>عروض وخصومات مستمرة</p>
-            </div>
-        </div>
-    </section>
+    <!-- Main Catalog Section -->
+    <main id="catalog" class="container" style="padding-top: 20px;">
 
-    <!-- Main Content Grid -->
-    <div class="container main-layout">
+        <!-- Category Filters -->
+        <section class="filters-section" style="margin-bottom: 30px; position: relative;">
+            <div class="catalog-header-container">
+                <div class="store-title-wrapper">
+                    <h2 class="section-title catalog-main-title">المتجر</h2>
+                    <span class="store-subtitle">تصفح أحدث المستلزمات والأجهزة للعناية بك</span>
+                </div>
 
-        <!-- Category Sidebar -->
-        <aside class="category-sidebar">
-            <div class="sidebar-header">
-                <h3><i class="fas fa-list"></i> الأقسام</h3>
-            </div>
-            <div class="category-list" id="category-list">
-                <!-- Categories injected here -->
-            </div>
-        </aside>
+                <div class="store-control-bar">
+                    <button id="openCategoriesBtn" class="premium-filter-btn" onclick="toggleCategoriesPanel()">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <span>التصنيفات</span>
+                        <i class="fa-solid fa-chevron-down down-icon"></i>
+                    </button>
 
-        <!-- Products Area -->
-        <section class="products-area" id="products">
-            <div class="section-header">
-                <h2 class="section-title">المنتجات</h2>
-                <!-- Filter buttons can be removed or kept as sub-filters -->
+                    <div class="premium-sort-wrapper">
+                        <i class="fa-solid fa-arrow-down-short-wide sort-icon"></i>
+                        <span class="sort-static-text">ترتيب حسب</span>
+                        <select id="sortSelect" class="premium-sort-select">
+                            <option value="default">الترتيب الافتراضي</option>
+                            <option value="price-asc">أقل سعر</option>
+                            <option value="price-desc">أعلى سعر</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="active-category-indicator">
+                    <strong id="currentCategoryText">الرئيسية (الكل)</strong>
+                </div>
             </div>
 
-            <div class="product-grid" id="product-grid">
-                <!-- Products injected here -->
+            <!-- In-page Categories Panel -->
+            <div id="categoriesPanel" class="categories-panel">
+                <div class="categories-grid" id="categoriesContainer">
+                    <button class="filter-btn active" data-id="all">
+                        <span>الرئيسية (الكل)</span>
+                    </button>
+                    <!-- Categories will be injected here via JS from products.js -->
+                </div>
             </div>
         </section>
 
-    </div>
-    <div class="filter-buttons">
-        <button class="filter-btn active" data-filter="all">الكل</button>
-        <!-- Future categories can be added here -->
-    </div>
+        <!-- Loading Spinner -->
+        <div id="loadingSpinner" class="spinner-container hidden">
+            <div class="spinner"></div>
+            <p>جاري تحميل المنتجات...</p>
+        </div>
+
+        <!-- Items Grid (Preserved ID) -->
+        <section class="items-grid product-grid" id="product-grid">
+            <!-- Products will be injected here via JS (products.js old logic with new UI templates) -->
+        </section>
+
+        <!-- Load More Section -->
+        <div id="loadMoreContainer" style="text-align: center; margin: 40px 0; display: none;">
+            <button id="loadMoreBtn" class="load-more-btn">
+                <i class="fa-solid fa-rotate-right"></i> عرض المزيد
+            </button>
+        </div>
+
+        <!-- No Results Message -->
+        <div id="noResults" class="no-results hidden">
+            <i class="fa-solid fa-box-open"></i>
+            <h3>عذراً، لا توجد أصناف تطابق بحثك.</h3>
+        </div>
+
+    </main>
+
+    <!-- Floating Contact Buttons (Desktop) -->
+    <div class="floating-contact">
+        <a href="https://wa.me/201068672360" target="_blank" class="contact-btn whatsapp" title="تواصل عبر واتساب">
+            <i class="fa-brands fa-whatsapp"></i>
+        </a>
+        <a href="tel:+201062037919" class="contact-btn phone" title="اتصل بنا">
+            <i class="fa-solid fa-phone"></i>
+        </a>
+        <a href="https://www.facebook.com/share/1cKhZxpH9B/" target="_blank" class="contact-btn facebook"
+            title="صفحتنا على فيسبوك">
+            <i class="fa-brands fa-facebook-f"></i>
+        </a>
     </div>
 
-    <div class="product-grid" id="product-grid">
-        <!-- Products will be injected here by JS -->
+    <!-- Contact Bottom Sheet (Mobile) -->
+    <div id="contactSheet" class="modal hidden">
+        <div class="contact-sheet-content">
+            <div class="sheet-header">
+                <h3>تواصل معنا</h3>
+                <span class="close-sheet" onclick="toggleContactSheet()">&times;</span>
+            </div>
+            <div class="sheet-options">
+                <a href="https://wa.me/201068672360" target="_blank" class="sheet-option wapp">
+                    <i class="fa-brands fa-whatsapp"></i> واتساب (مبيعات)
+                </a>
+                <a href="tel:+201062037919" class="sheet-option phone">
+                    <i class="fa-solid fa-phone"></i> اتصال
+                </a>
+                <a href="https://www.facebook.com/share/1cKhZxpH9B/" target="_blank" class="sheet-option fb">
+                    <i class="fa-brands fa-facebook-f"></i> الصفحة الرسمية
+                </a>
+            </div>
+        </div>
     </div>
-    </div>
-    </section>
 
-    <!-- Contact Section -->
-    <section id="contact" class="contact-section">
-        <div class="container">
-            <h2 class="section-title">تواصل معنا</h2>
-            <div class="contact-grid">
-                <div class="contact-info-box">
-                    <div class="info-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <div>
-                            <h4>العنوان</h4>
-                            <p>مصر، القاهرة</p>
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-phone-alt"></i>
-                        <div>
-                            <h4>أرقام الهاتف (واتساب)</h4>
-                            <p><a href="https://wa.me/201062037919" target="_blank">01062037919 <i
-                                        class="fab fa-whatsapp"></i></a></p>
-                            <p><a href="https://wa.me/201501882143" target="_blank">01501882143 <i
-                                        class="fab fa-whatsapp"></i></a></p>
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-envelope"></i>
-                        <div>
-                            <h4>البريد الإلكتروني</h4>
-                            <p>info@originalmed.com</p>
-                        </div>
-                    </div>
+    <!-- Floating Cart Button -->
+    <div class="floating-cart" id="floatingCartBtn" onclick="toggleCart()">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span class="cart-badge" id="cartBadge">0</span>
+    </div>
+
+    <!-- Image Lightbox Modal -->
+    <div id="imageModal" class="modal hidden">
+        <span class="close-modal">&times;</span>
+        <img class="modal-content" id="img01">
+        <div id="caption"></div>
+    </div>
+
+    <!-- Shopping Cart Sidebar -->
+    <div id="cartSidebar" class="modal hidden cart-sidebar-wrapper">
+        <div class="cart-content">
+            <div class="cart-header">
+                <h2><i class="fa-solid fa-cart-shopping"></i> سلة المشتريات</h2>
+                <span class="close-cart" onclick="toggleCart()">&times;</span>
+            </div>
+
+            <div class="cart-items" id="cartItemsContainer">
+                <!-- Cart items will be rendered here -->
+            </div>
+
+            <div class="cart-summary">
+                <div class="total-row">
+                    <span>الإجمالي:</span>
+                    <strong id="cartTotal">0.00 ج.م</strong>
                 </div>
-                <!-- Optional: Add a map here -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p>&copy; 2026 متجر ORIGINAL_MED. جميع الحقوق محفوظة.</p>
-            <div class="social-footer">
-                <a href="https://www.facebook.com/share/1cKhZxpH9B/" target="_blank"><i
-                        class="fab fa-facebook-f"></i></a>
-                <a href="https://wa.me/201068672360" target="_blank"><i class="fab fa-whatsapp"></i></a>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Cart Sidebar -->
-    <div class="cart-sidebar" id="cart-sidebar">
-        <div class="cart-header">
-            <h3><i class="fas fa-shopping-bag"></i> سلة المشتريات</h3>
-            <button class="close-cart" onclick="toggleCart()">&times;</button>
-        </div>
-        <div class="cart-items" id="cart-items">
-            <!-- Cart items will be injected here -->
-        </div>
-        <div class="cart-footer">
-            <div class="cart-total">
-                <span>المجموع الكلي:</span>
-                <span id="cart-total-price">0.00 ج.م</span>
-            </div>
-            <button class="btn btn-primary btn-block" onclick="checkout()">إتمام الشراء <i
-                    class="fas fa-check"></i></button>
-        </div>
-    </div>
-    <div class="cart-overlay" onclick="toggleCart()"></div>
-
-    <!-- Product Details Modal -->
-    <div class="modal" id="product-modal">
-        <div class="modal-content product-modal-content">
-            <span class="close-modal" onclick="closeProductModal()">&times;</span>
-            <div id="product-modal-body">
-                <!-- Content injected by JS -->
+                <button class="checkout-btn primary-btn" onclick="proceedToCheckout()">
+                    إتمام الشراء <i class="fa-solid fa-arrow-left"></i>
+                </button>
             </div>
         </div>
     </div>
 
     <!-- Checkout Modal -->
-    <div class="modal" id="checkout-modal">
-        <div class="modal-content">
+    <div id="checkoutModal" class="modal hidden checkout-modal-wrapper">
+        <div class="modal-content checkout-modal-content">
             <div class="modal-header">
-                <h3>إتمام الطلب</h3>
-                <span class="close-modal" onclick="closeCheckout()">&times;</span>
+                <h2 style="color:var(--dark); margin:0; font-size:1.5rem;">إتمام الطلب</h2>
+                <span class="close-modal" style="color:var(--dark);" onclick="closeCheckout()">&times;</span>
             </div>
-            <form id="checkout-form">
-                <div class="form-group">
-                    <label><i class="fas fa-user"></i> الاسم الكامل</label>
-                    <input type="text" placeholder="الاسم ثلاثي" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-phone"></i> رقم الهاتف</label>
-                    <input type="tel" placeholder="01xxxxxxxxx" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-map-marker-alt"></i> العنوان بالتفصيل</label>
-                    <textarea placeholder="المحافظة، المدينة، الشارع..." required></textarea>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-money-bill-wave"></i> طريقة الدفع المفضلة</label>
-                    <select id="payment-method"
-                        style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px;">
-                        <option value="الدفع عند الاستلام">الدفع عند الاستلام (Cash)</option>
-                        <option value="فودافون كاش">فودافون كاش (Vodafone Cash)</option>
-                        <option value="انستا باي">انستا باي (InstaPay)</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary btn-block">تأكيد الطلب عبر واتساب <i
-                        class="fab fa-whatsapp"></i></button>
-            </form>
+            <div class="checkout-details">
+                <p class="checkout-hint">يرجى إدخال بياناتك لإرسال الطلب إلينا (يفضل رقم عليه واتساب):</p>
+                <form id="checkoutForm" class="checkout-form">
+                    <div class="input-group">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="custName" placeholder="الاسم الكريم" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fa-solid fa-phone"></i>
+                        <input type="tel" id="custPhone" placeholder="رقم الموبايل (أو واتساب)" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <textarea id="custAddress" placeholder="المحافظة، المدينة، الشارع بالتفصيل..." rows="2"
+                            required></textarea>
+                    </div>
+                    <div class="input-group">
+                        <i class="fa-solid fa-money-bill-wave"></i>
+                        <select id="paymentMethod"
+                            style="width: 100%; padding: 12px 40px 12px 15px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; font-size: 0.95rem; direction: rtl; background: #f9f9f9; cursor:pointer;"
+                            required>
+                            <option value="الدفع عند الاستلام (كاش)">الدفع عند الاستلام (كاش)</option>
+                            <option value="فودافون كاش">فودافون كاش</option>
+                            <option value="إنستا باي (InstaPay)">إنستا باي (InstaPay)</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="checkout-btn whatsapp-btn" style="margin-top: 15px;">
+                        <i class="fa-brands fa-whatsapp"></i> تأكيد الطلب عبر واتساب
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 
+    <!-- Auth Modal (Login / Register) - Preserved purely for UI though not functioning with Supabase currently -->
+    <div id="authModal" class="modal hidden">
+        <div class="modal-content auth-modal-content">
+            <span class="close-modal" onclick="closeAuthModal()">&times;</span>
 
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">تسجيل الدخول</button>
+                <button class="auth-tab" id="tabRegister" onclick="switchAuthTab('register')">حساب جديد</button>
+            </div>
 
-    <script src="scripts/products.js?v=1771506359"></script>
-    <script src="scripts/app.js?v=1740000001"></script>
+            <div class="auth-form-container">
+                <form id="loginForm" class="auth-form">
+                    <div class="input-group">
+                        <i class="fa-solid fa-envelope"></i>
+                        <input type="email" id="loginEmail" placeholder="البريد الإلكتروني" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="loginPassword" placeholder="كلمة المرور" required>
+                    </div>
+                    <button type="button" class="primary-btn checkout-btn"
+                        onclick="alert('خاصية تسجيل الدخول قيد التطوير.')">دخول <i
+                            class="fa-solid fa-right-to-bracket"></i></button>
+                </form>
+
+                <form id="registerForm" class="auth-form hidden">
+                    <div class="input-group">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="regName" placeholder="الاسم الكريم" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fa-solid fa-envelope"></i>
+                        <input type="email" id="regEmail" placeholder="البريد الإلكتروني" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fa-solid fa-phone"></i>
+                        <input type="tel" id="regPhone" placeholder="رقم الهاتف" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="regPassword" placeholder="كلمة المرور (6 أحرف أو أكثر)" required
+                            minlength="6">
+                    </div>
+                    <button type="button" class="primary-btn checkout-btn"
+                        onclick="alert('خاصية تسجيل حساب جديد قيد التطوير.')">تسجيل <i
+                            class="fa-solid fa-user-plus"></i></button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Confirm Modal -->
+    <div id="confirmModal" class="modal hidden" style="z-index: 3000;">
+        <div class="modal-content" style="max-width: 400px; text-align: center; padding: 30px;">
+            <i class="fa-solid fa-triangle-exclamation"
+                style="font-size: 3rem; color: #e74c3c; margin-bottom: 15px;"></i>
+            <h3 style="color: var(--dark); margin-bottom: 15px; font-size: 1.4rem;">تأكيد تفريغ السلة</h3>
+            <p style="color: #7f8c8d; margin-bottom: 25px; line-height: 1.5;">هل أنت متأكد من أنك تريد مسح جميع المنتجات
+                من السلة؟ لا يمكن التراجع عن هذه الخطوة.</p>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button onclick="executeEmptyCart()" class="checkout-btn"
+                    style="background: #e74c3c; width: auto; padding: 10px 25px; border-radius: 25px;">نعم، أفرغ
+                    السلة</button>
+                <button onclick="closeConfirmModal()" class="checkout-btn"
+                    style="background: #95a5a6; width: auto; padding: 10px 25px; border-radius: 25px;">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hidden">تمت الإضافة للسلة بنجاح!</div>
+
+    <!-- Product Details Modal (Quick View) -->
+    <div id="productDetailsModal" class="modal hidden" style="z-index: 2500;">
+        <div class="modal-content product-modal-content">
+            <span class="close-modal" onclick="closeProductModal()">&times;</span>
+            <div class="product-details-grid">
+                <!-- Right Side: Image -->
+                <div class="product-modal-image">
+                    <img id="modalProductImg" src="" alt="صورة المنتج">
+                    <span id="modalProductStock" class="stock-badge">متوفر</span>
+                </div>
+                <!-- Left Side: Details -->
+                <div class="product-modal-info">
+                    <p id="modalProductCategory" class="modal-category">القسم</p>
+                    <h2 id="modalProductName" class="modal-title">اسم المنتج</h2>
+                    <div class="modal-price-box">
+                        <span id="modalProductPrice" class="modal-price">0.00</span>
+                        <span class="currency">ج.م</span>
+                        <span id="modalProductOldPrice" class="modal-old-price"
+                            style="display:none; text-decoration:line-through; color:#999; margin-right:10px;"></span>
+                    </div>
+
+                    <div class="modal-description-box">
+                        <h3>📖 تفاصيل ومواصفات المنتج:</h3>
+                        <p id="modalProductDesc" class="modal-desc-text">
+                            (لمعرفة المواصفات الدقيقة والميزات التقنية لهذا الجهاز، يسعدنا تواصلكم المباشر معنا عبر
+                            واتساب للمساعدة)
+                        </p>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button id="modalAddToCartBtn" class="primary-btn checkout-btn">
+                            <i class="fa-solid fa-cart-plus"></i> إضافة للسلة
+                        </button>
+                        <button id="modalWhatsappBtn" class="whatsapp-btn checkout-btn"
+                            style="background:#25d366; color:#fff;">
+                            <i class="fa-brands fa-whatsapp"></i> استفسار / طلب عبر واتساب
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Related Products Section -->
+            <div id="relatedProductsContainer" class="related-products-section hidden">
+                <h3 class="related-title">منتجات مشابهة قد تعجبك</h3>
+                <div class="related-products-scroll" id="relatedProductsScroll">
+                    <!-- Products injected via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item active" onclick="window.scrollTo(0,0); return false;">
+            <i class="fa-solid fa-house"></i>
+            <span>الرئيسية</span>
+        </a>
+        <a href="#catalog" class="nav-item">
+            <i class="fa-solid fa-list-ul"></i>
+            <span>الكتالوج</span>
+        </a>
+        <a href="#" class="nav-item" onclick="toggleAuthModal('login'); return false;" id="bottomNavAuth">
+            <i class="fa-solid fa-user"></i>
+            <span>دخول</span>
+        </a>
+        <a href="#" class="nav-item" onclick="toggleCart(); return false;">
+            <div class="nav-icon-wrapper">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span class="nav-badge" id="navCartBadge">0</span>
+            </div>
+            <span>السلة</span>
+        </a>
+        <a href="#" class="nav-item" onclick="toggleContactSheet(); return false;">
+            <i class="fa-solid fa-headset"></i>
+            <span>تواصل</span>
+        </a>
+    </nav>
+
+    <!-- Footer -->
+    <footer>
+        <p>جميع الحقوق محفوظة &copy; 2026 - Original-Med-Store</p>
+    </footer>
+
+    <!-- Products Data from Python Script Generation -->
+    <script src="scripts/products.js?v=1772404308"></script>
+
+    <!-- Custom Application Logic integrating Medical Store static arrays with new UI flows -->
+    <script src="scripts/app.js?v=2"></script>
 </body>
 
 </html>
