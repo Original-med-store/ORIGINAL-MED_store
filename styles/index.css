@@ -822,8 +822,10 @@ main {
 .product-price.old,
 #modalProductOldPrice {
     text-decoration: line-through;
-    color: #dc2626 !important;
-    /* Professional Red */
+    text-decoration-color: #dc2626 !important;
+    /* Professional Red Strikethrough */
+    color: #95a5a6 !important;
+    /* Elegant Light Gray */
 }
 
 .discount-badge {
