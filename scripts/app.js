@@ -123,7 +123,7 @@ function renderProducts(items) {
             priceHtml = `
                 <div class="product-price-container">
                     <span class="price">${item.price} <span>ج.م</span></span>
-                    <span class="product-price old" style="text-decoration: line-through; color: #7f8c8d; font-size: 0.8rem; margin-right: 5px;">${item.old_price} ج.م</span>
+                    <span class="product-price old" style="font-size: 0.8rem; margin-right: 5px;">${item.old_price} ج.م</span>
                 </div>
             `;
         } else {
