@@ -39,6 +39,18 @@ var products = [
             "assets/images.jpeg"
         ],
         "id": 3
+    },
+    {
+        "name": "dsdsdsdsd",
+        "price": 222,
+        "old_price": 3333,
+        "description": "",
+        "category_id": 3,
+        "image": "https://via.placeholder.com/300",
+        "images": [
+            "https://via.placeholder.com/300"
+        ],
+        "id": 4
     }
 ];
 
