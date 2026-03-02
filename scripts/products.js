@@ -51,6 +51,18 @@ var products = [
             "https://via.placeholder.com/300"
         ],
         "id": 4
+    },
+    {
+        "name": "wwwwww",
+        "price": 22222,
+        "old_price": 333333,
+        "description": "dfvcvcdvdc",
+        "category_id": 3,
+        "image": "assets/day 4 screen 2.PNG",
+        "images": [
+            "assets/day 4 screen 2.PNG"
+        ],
+        "id": 5
     }
 ];
 
