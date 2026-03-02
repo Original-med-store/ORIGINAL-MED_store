@@ -315,10 +315,10 @@ function handleLiveSearch(e) {
             a.innerHTML = `
                 <img src="${img}" onerror="this.onerror=null;this.src='${FALLBACK_IMG}';" alt="${item.name}">
                 <div class="search-dropdown-info">
-                    <div class="search-dropdown-name">${item.name}</div>
-                    <div class="search-dropdown-cat">${catName}</div>
+                    <div class="search-dropdown-name" style="font-weight: 800; color: #1a1a2e; margin-bottom: 2px;">${item.name}</div>
+                    <div class="search-dropdown-cat" style="font-size: 0.8rem; color: #3a7bd5;">${catName}</div>
                 </div>
-                <div class="search-dropdown-price">${parseFloat(item.price).toFixed(2)} ج.م</div>
+                <div class="search-dropdown-price" style="font-weight: 800; color: #27ae60;">${parseFloat(item.price).toFixed(2)} ج.م</div>
             `;
 
             const openAction = (e) => {
@@ -357,6 +357,54 @@ function setupEventListeners() {
     const sortSelect = document.getElementById('sortSelect');
     if (sortSelect) sortSelect.addEventListener('change', filterAndSearch);
 
+    const checkoutForm = document.getElementById('checkoutForm');
+    if (checkoutForm) {
+        checkoutForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (cart.length === 0) {
+                alert("السلة فارغة. يرجى إضافة منتجات أولاً.");
+                return;
+            }
+
+            const name = document.getElementById('custName').value;
+            const phone = document.getElementById('custPhone').value;
+            const address = document.getElementById('custAddress').value;
+            const paymentMethod = document.getElementById('paymentMethod').value;
+
+            let total = 0;
+            let orderDetails = cart.map(item => {
+                total += (item.price * item.qty);
+                return `▫️ ${item.qty}x ${item.name} (${(item.price * item.qty).toFixed(2)} ج.م)`;
+            }).join('\n');
+
+            const message = `
+🌟 *طلب وتوصيل جديد* 🌟
+-------------------------
+👤 *الاسم:* ${name}
+📞 *الهاتف:* ${phone}
+📍 *العنوان:* ${address || 'لم يُحدد'}
+💳 *طريقة الدفع:* ${paymentMethod}
+-------------------------
+📦 *المنتجات:*
+${orderDetails}
+-------------------------
+💰 *الإجمالي المطلوب:* ${total.toFixed(2)} ج.م
+
+نرجو التأكيد والتواصل في أسرع وقت. شكراً!
+            `.trim();
+
+            const whatsappNumber = '201068672360';
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+
+            cart = [];
+            updateCartUI();
+            closeCheckout();
+
+            window.open(whatsappUrl, '_blank');
+        });
+    }
+
     if (categoriesContainer) {
         categoriesContainer.addEventListener('click', (e) => {
             const btn = e.target.closest('.filter-btn');
@@ -378,17 +426,30 @@ function setupEventListeners() {
 // Global Modal Manager
 function closeTopMostModal() {
     let closedAny = false;
+
+    const contactSheet = document.getElementById('contactSheet');
+    const authModal = document.getElementById('authModal');
+    const confirmModal = document.getElementById('confirmModal');
+
+    // Order of priority for closing
     if (lightboxModal && lightboxModal.classList.contains("show")) {
         lightboxModal.classList.remove("show");
+        setTimeout(() => lightboxModal.classList.add('hidden'), 300);
         closedAny = true;
-    } else if (document.getElementById('confirmModal') && document.getElementById('confirmModal').classList.contains('show')) {
-        const cfmModal = document.getElementById('confirmModal');
-        cfmModal.classList.remove('show');
-        setTimeout(() => cfmModal.classList.add('hidden'), 300);
+    } else if (contactSheet && contactSheet.classList.contains("show")) {
+        contactSheet.classList.remove("show");
+        setTimeout(() => contactSheet.classList.add('hidden'), 300);
+        closedAny = true;
+    } else if (authModal && authModal.classList.contains("show")) {
+        authModal.classList.remove("show");
+        setTimeout(() => authModal.classList.add('hidden'), 300);
+        closedAny = true;
+    } else if (confirmModal && confirmModal.classList.contains('show')) {
+        confirmModal.classList.remove('show');
+        setTimeout(() => confirmModal.classList.add('hidden'), 300);
         closedAny = true;
     } else if (checkoutModal && checkoutModal.classList.contains('show')) {
-        checkoutModal.classList.remove('show');
-        setTimeout(() => checkoutModal.classList.add('hidden'), 300);
+        closeCheckout(); // Use the dedicated function
         closedAny = true;
     } else if (productDetailsModal && productDetailsModal.classList.contains('show')) {
         productDetailsModal.classList.remove('show');
@@ -411,21 +472,33 @@ window.addEventListener('popstate', function () {
 
 window.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
+        const contactSheet = document.getElementById('contactSheet');
+        const authModal = document.getElementById('authModal');
+
         const isOpen = (lightboxModal && lightboxModal.classList.contains('show')) ||
             (productDetailsModal && productDetailsModal.classList.contains('show')) ||
             (cartSidebar && cartSidebar.classList.contains('show-sidebar')) ||
             (checkoutModal && checkoutModal.classList.contains('show')) ||
+            (contactSheet && contactSheet.classList.contains('show')) ||
+            (authModal && authModal.classList.contains('show')) ||
             (document.getElementById('confirmModal') && document.getElementById('confirmModal').classList.contains('show'));
         if (isOpen) history.back();
     }
 });
 
 window.addEventListener('click', function (event) {
+    const contactSheet = document.getElementById('contactSheet');
+    const authModal = document.getElementById('authModal');
+
     if (event.target == lightboxModal && lightboxModal.classList.contains('show')) {
         history.back();
     } else if (event.target == productDetailsModal && productDetailsModal.classList.contains('show')) {
         history.back();
     } else if (event.target == checkoutModal && checkoutModal.classList.contains('show')) {
+        history.back();
+    } else if (contactSheet && event.target == contactSheet && contactSheet.classList.contains('show')) {
+        history.back();
+    } else if (authModal && event.target == authModal && authModal.classList.contains('show')) {
         history.back();
     } else if (event.target.closest('#cartSidebar') === null && event.target.closest('#floatingCartBtn') === null && cartSidebar && cartSidebar.classList.contains('show-sidebar')) {
         cartSidebar.classList.remove('show-sidebar');
@@ -460,7 +533,6 @@ function closeCategoriesModal() {
     }
 }
 
-// Lightbox
 function openLightbox(imgSrc, caption) {
     if (imgSrc.includes('placeholder')) return;
     lightboxModal.classList.remove('hidden');
@@ -472,6 +544,61 @@ function openLightbox(imgSrc, caption) {
 
 function closeLightbox() {
     if (lightboxModal.classList.contains('show')) history.back();
+}
+
+// Contact Sheet Modal
+function toggleContactSheet() {
+    const sheet = document.getElementById('contactSheet');
+    if (!sheet) return;
+    if (sheet.classList.contains('show')) {
+        sheet.classList.remove('show');
+        setTimeout(() => sheet.classList.add('hidden'), 300);
+    } else {
+        sheet.classList.remove('hidden');
+        setTimeout(() => sheet.classList.add('show'), 10);
+        history.pushState({ modal: true }, "");
+    }
+}
+
+// Auth Modal
+function toggleAuthModal(tab) {
+    const authModal = document.getElementById('authModal');
+    if (!authModal) return;
+    if (authModal.classList.contains('show')) {
+        closeAuthModal();
+    } else {
+        authModal.classList.remove('hidden');
+        setTimeout(() => authModal.classList.add('show'), 10);
+        if (tab) switchAuthTab(tab);
+        history.pushState({ modal: true }, "");
+    }
+}
+
+function closeAuthModal() {
+    const authModal = document.getElementById('authModal');
+    if (authModal && authModal.classList.contains('show')) {
+        authModal.classList.remove('show');
+        setTimeout(() => authModal.classList.add('hidden'), 300);
+    }
+}
+
+function switchAuthTab(tab) {
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const tabLogin = document.getElementById('tabLogin');
+    const tabRegister = document.getElementById('tabRegister');
+
+    if (tab === 'login') {
+        loginForm.classList.remove('hidden');
+        registerForm.classList.add('hidden');
+        tabLogin.classList.add('active');
+        tabRegister.classList.remove('active');
+    } else {
+        registerForm.classList.remove('hidden');
+        loginForm.classList.add('hidden');
+        tabRegister.classList.add('active');
+        tabLogin.classList.remove('active');
+    }
 }
 
 
@@ -615,8 +742,12 @@ function addToCart(id, name, price, imgUrl) {
     const toast = document.getElementById('toast');
     if (toast) {
         toast.textContent = `تم إضافة "${name}" للسلة بنجاح`;
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 3000);
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('show'), 10);
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.classList.add('hidden'), 400);
+        }, 3000);
     }
 }
 
@@ -723,57 +854,21 @@ function proceedToCheckout() {
 }
 
 function closeCheckout() {
-    if (checkoutModal && checkoutModal.classList.contains('show')) {
-        history.back();
+    if (checkoutModal) {
+        checkoutModal.classList.remove('show', 'open');
+        setTimeout(() => {
+            checkoutModal.classList.add('hidden');
+            // Remove any persistent blur or black overlay classes/styles
+            document.querySelectorAll('.modal').forEach(m => {
+                m.classList.remove('show', 'open');
+                m.classList.add('hidden');
+            });
+            document.body.style.overflow = '';
+        }, 300);
     }
 }
 
-if (checkoutForm) {
-    checkoutForm.addEventListener('submit', function (e) {
-        e.preventDefault();
-        if (cart.length === 0) {
-            alert("السلة فارغة. يرجى إضافة منتجات أولاً.");
-            return;
-        }
-
-        const name = document.getElementById('custName').value;
-        const phone = document.getElementById('custPhone').value;
-        const address = document.getElementById('custAddress').value;
-        const paymentMethod = document.getElementById('paymentMethod').value;
-
-        let total = 0;
-        let orderDetails = cart.map(item => {
-            total += (item.price * item.qty);
-            return `▫️ ${item.qty}x ${item.name} (${(item.price * item.qty).toFixed(2)} ج.م)`;
-        }).join('\n');
-
-        const message = `
-🌟 *طلب وتوصيل جديد* 🌟
--------------------------
-👤 *الاسم:* ${name}
-📞 *الهاتف:* ${phone}
-📍 *العنوان:* ${address || 'لم يُحدد'}
-💳 *طريقة الدفع:* ${paymentMethod}
--------------------------
-📦 *المنتجات:*
-${orderDetails}
--------------------------
-💰 *الإجمالي المطلوب:* ${total.toFixed(2)} ج.م
-
-نرجو التأكيد والتواصل في أسرع وقت. شكراً!
-    `.trim();
-
-        const whatsappNumber = '201068672360'; // The owner number updated
-        const encodedMessage = encodeURIComponent(message);
-        const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
-
-        cart = [];
-        updateCartUI();
-        closeCheckout();
-
-        window.open(whatsappUrl, '_blank');
-    });
-}
+// (Checkout logic moved to init function)
 
 // Persist Form Data
 ['custName', 'custPhone', 'custAddress'].forEach(id => {

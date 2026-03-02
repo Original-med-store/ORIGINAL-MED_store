@@ -8,26 +8,24 @@
 
     <!-- SEO & Search Engine Optimization -->
     <meta name="description"
-        content="متجر ORIGINAL_MED يوفر أرقى المستلزمات الطبية والأجهزة التعويضية بأفضل الأسعار. تسوق الآن واحصل على منتجات أصلية وشحن سريع لجميع المحافظات.">
-    content="متجر Original MED يوفر أحدث الأجهزة الطبية ومستلزمات العناية الصحية بأفضل الأسعار.">
+        content="وجهتك المتكاملة لبيع وتوريد أحدث الأجهزة والمستلزمات الطبية. تسوق الآن تشكيلة واسعة بأسعار منافسة للعيادات، المستشفيات، والمراكز الطبية.">
     <meta name="keywords" content="مستلزمات طبية, أجهزة طبية, ORIGINAL_MED, رعاية صحية, معدات طبية, شراء اونلاين, مصر">
     <meta name="author" content="Original MED">
 
     <!-- Open Graph for Social Media -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://original-med-store.vercel.app/"> <!-- Changed for Vercel -->
-    <meta property="og:title" content="Original MED">
-    <meta property="og:description" content="تسوق أفضل المستلزمات والأجهزة الطبية من Original MED.">
-    <meta property="og:image"
-        content="https://images.unsplash.com/photo-1631217868264-e5b90bb7e13c?q=80&w=2091&auto=format&fit=crop">
+    <meta property="og:url" content="https://original-med-store.vercel.app/">
+    <meta property="og:title" content="Original MED | متجر المستلزمات والأجهزة الطبية">
+    <meta property="og:description"
+        content="وجهتك المتكاملة لبيع وتوريد أحدث الأجهزة والمستلزمات الطبية. تسوق الآن تشكيلة واسعة بأسعار منافسة.">
+    <meta property="og:image" content="assets/logo.png">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Original MED">
+    <meta name="twitter:title" content="Original MED | متجر المستلزمات الطبية">
     <meta name="twitter:description"
         content="تسوق أحدث الأجهزة والمستلزمات الطبية بأفضل الأسعار. جودة مضمونة وشحن سريع.">
-    <meta name="twitter:image"
-        content="https://images.unsplash.com/photo-1631217868264-e5b90bb7e13c?q=80&w=2091&auto=format&fit=crop">
+    <meta name="twitter:image" content="assets/logo.png">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -53,8 +51,8 @@
                 <a href="#" class="active">الرئيسية</a>
                 <a href="#catalog">المتجر</a>
                 <a href="#" onclick="toggleContactSheet(); return false;">تواصل معنا</a>
-                <button class="auth-btn" id="navAuthBtn" onclick="toggleAuthModal('login')">
-                    <i class="fa-solid fa-user"></i> دخول
+                <button class="auth-btn" id="navAuthBtn" onclick="toggleAuthModal('register')">
+                    <i class="fa-solid fa-user-plus"></i> تسجيل
                 </button>
             </div>
             <!-- Search Box (Moved up for mobile sticky header like Amazon) -->
@@ -223,7 +221,7 @@
     </div>
 
     <!-- Shopping Cart Sidebar -->
-    <div id="cartSidebar" class="modal hidden cart-sidebar-wrapper">
+    <div id="cartSidebar" class="modal cart-sidebar-wrapper">
         <div class="cart-content">
             <div class="cart-header">
                 <h2><i class="fa-solid fa-cart-shopping"></i> سلة المشتريات</h2>
@@ -294,8 +292,8 @@
             <span class="close-modal" onclick="closeAuthModal()">&times;</span>
 
             <div class="auth-tabs">
-                <button class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">تسجيل الدخول</button>
-                <button class="auth-tab" id="tabRegister" onclick="switchAuthTab('register')">حساب جديد</button>
+                <button class="auth-tab active" id="tabRegister" onclick="switchAuthTab('register')">حساب جديد</button>
+                <button class="auth-tab" id="tabLogin" onclick="switchAuthTab('login')">تسجيل الدخول</button>
             </div>
 
             <div class="auth-form-container">
@@ -410,6 +408,23 @@
             </div>
         </div>
     </div>
+    </div>
+
+    <!-- Contact Sheet -->
+    <div id="contactSheet" class="modal hidden">
+        <div class="modal-content contact-modal-content"
+            style="max-width:350px; text-align:center; padding:30px; display:flex; flex-direction:column; gap:15px;">
+            <span class="close-modal" onclick="toggleContactSheet()" style="top:10px; right:20px;">&times;</span>
+            <h3 style="color:var(--dark); margin-bottom:10px;">اختر وسيلة التواصل</h3>
+            <a href="https://wa.me/201068672360" target="_blank" class="primary-btn"
+                style="background:#25D366; text-decoration:none;"><i class="fa-brands fa-whatsapp"></i> واتساب (أسرع
+                رد)</a>
+            <a href="tel:01068672360" class="primary-btn" style="background:var(--secondary); text-decoration:none;"><i
+                    class="fa-solid fa-phone"></i> اتصال هاتفي مباشر</a>
+            <a href="https://facebook.com/kemicatalog" target="_blank" class="primary-btn"
+                style="background:#1877F2; text-decoration:none;"><i class="fa-brands fa-facebook"></i> رسائل فيسبوك</a>
+        </div>
+    </div>
 
     <!-- Mobile Bottom Navigation -->
     <nav class="bottom-nav">
@@ -421,9 +436,9 @@
             <i class="fa-solid fa-list-ul"></i>
             <span>الكتالوج</span>
         </a>
-        <a href="#" class="nav-item" onclick="toggleAuthModal('login'); return false;" id="bottomNavAuth">
-            <i class="fa-solid fa-user"></i>
-            <span>دخول</span>
+        <a href="#" class="nav-item" onclick="toggleAuthModal('register'); return false;" id="bottomNavAuth">
+            <i class="fa-solid fa-user-plus"></i>
+            <span>تسجيل</span>
         </a>
         <a href="#" class="nav-item" onclick="toggleCart(); return false;">
             <div class="nav-icon-wrapper">
