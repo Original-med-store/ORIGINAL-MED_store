@@ -19,7 +19,7 @@ var products = [
     {
         "name": "جهاز سكر بايو تست",
         "price": 350,
-        "old_price": 400,
+        "old_price": 430,
         "description": "جهاز سكر بايو تيست فشيخ",
         "image": "assets/images.jpeg",
         "images": [
