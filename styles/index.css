@@ -1151,16 +1151,10 @@ footer {
     right: -100%;
     top: 0;
     border-radius: 0;
-    transform: none !important;
-    display: flex;
-    flex-direction: column;
-    transition: right 0.4s ease;
-    z-index: 2501;
-    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.2);
+    transition: right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-#cartSidebar.show-sidebar .cart-content,
-.cart-sidebar.open .cart-content {
+#cartSidebar.show-sidebar .cart-content {
     right: 0;
 }
 
@@ -1866,4 +1860,5 @@ footer {
     margin-top: auto;
     color: var(--primary);
     font-weight: bold;
+}
 }

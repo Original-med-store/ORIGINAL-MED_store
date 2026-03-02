@@ -2,9 +2,8 @@
 
 let cart = JSON.parse(localStorage.getItem('medicalRetailCart')) || [];
 
-// DOM Elements
 const itemsGrid = document.getElementById('product-grid');
-const categoriesContainer = document.getElementById('category-list');
+const categoriesContainer = document.getElementById('categoriesContainer');
 const searchInput = document.getElementById('search-input');
 const searchBtn = document.getElementById('search-btn');
 
@@ -397,7 +396,10 @@ function closeTopMostModal() {
         closedAny = true;
     } else if (cartSidebar && cartSidebar.classList.contains('show-sidebar')) {
         cartSidebar.classList.remove('show-sidebar');
-        setTimeout(() => cartSidebar.classList.add('hidden'), 400);
+        setTimeout(() => {
+            cartSidebar.classList.remove('show');
+            cartSidebar.classList.add('hidden');
+        }, 400);
         closedAny = true;
     }
     return closedAny;
@@ -427,7 +429,10 @@ window.addEventListener('click', function (event) {
         history.back();
     } else if (event.target.closest('#cartSidebar') === null && event.target.closest('#floatingCartBtn') === null && cartSidebar && cartSidebar.classList.contains('show-sidebar')) {
         cartSidebar.classList.remove('show-sidebar');
-        setTimeout(() => cartSidebar.classList.add('hidden'), 400);
+        setTimeout(() => {
+            cartSidebar.classList.remove('show');
+            cartSidebar.classList.add('hidden');
+        }, 400);
     }
 });
 
@@ -584,9 +589,13 @@ function toggleCart(e) {
     if (!cartSidebar) return;
     if (cartSidebar.classList.contains("show-sidebar")) {
         cartSidebar.classList.remove('show-sidebar');
-        setTimeout(() => cartSidebar.classList.add('hidden'), 400);
+        setTimeout(() => {
+            cartSidebar.classList.remove('show');
+            cartSidebar.classList.add('hidden');
+        }, 400);
     } else {
         cartSidebar.classList.remove('hidden');
+        cartSidebar.classList.add('show');
         // Small delay to allow CSS display:block to apply before animating transform
         setTimeout(() => {
             cartSidebar.classList.add("show-sidebar");
