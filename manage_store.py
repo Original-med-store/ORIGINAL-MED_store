@@ -479,73 +479,70 @@ class PremiumStoreManager:
     def clear_cat_fields(self):
         self.cat_name_var.set(""); self.cat_img_label.config(text="لا توجد صورة"); self.cur_cat_img = None
 
-    # --- Utilities (Universal Interaction Engine) ---
+    # --- Utilities (Universal No-Fail Interaction Engine) ---
     def setup_bindings(self):
-        # Bind most reliable behavior to the widget classes themselves
-        classes = ["Entry", "Text", "TCombobox"]
-        for cls in classes:
-            self.root.bind_class(cls, "<Control-v>", lambda e: self.handle_paste())
-            self.root.bind_class(cls, "<Control-V>", lambda e: self.handle_paste())
-            self.root.bind_class(cls, "<Control-c>", lambda e: self.handle_copy())
-            self.root.bind_class(cls, "<Control-C>", lambda e: self.handle_copy())
-            self.root.bind_class(cls, "<Control-x>", lambda e: self.handle_cut())
-            self.root.bind_class(cls, "<Control-X>", lambda e: self.handle_cut())
-            self.root.bind_class(cls, "<Control-a>", lambda e: self.handle_select_all())
-            self.root.bind_class(cls, "<Control-A>", lambda e: self.handle_select_all())
+        # Bind once to the root for absolute global capture
+        for seq in ["<Control-Key>", "<Control-Key-v>", "<Control-Key-V>", 
+                    "<Control-Key-c>", "<Control-Key-C>", "<Control-Key-x>", 
+                    "<Control-Key-X>", "<Control-Key-a>", "<Control-Key-A>"]:
+            self.root.bind_all(seq, self.universal_shortcut_handler)
 
-    def handle_paste(self):
+    def universal_shortcut_handler(self, event):
         w = self.root.focus_get()
-        if not w: return "break"
+        if not w: return
         
-        txt = ""
-        # Multi-Method Clipboard Retrieval
+        shortcut = event.keysym.lower()
+        code = event.keycode
+        
         try:
-            # Method 1: Tcl Selection
-            txt = self.root.selection_get(selection='CLIPBOARD')
+            # v (86), c (67), x (88), a (65)
+            if shortcut == 'v' or code == 86:
+                return self.perfect_paste(w)
+            elif shortcut == 'c' or code == 67:
+                w.event_generate("<<Copy>>")
+            elif shortcut == 'x' or code == 88:
+                w.event_generate("<<Cut>>")
+            elif shortcut == 'a' or code == 65:
+                return self.perfect_select_all(w)
         except:
-            try:
-                # Method 2: Standard Tk Board
-                txt = self.root.clipboard_get()
-            except:
-                # Method 3: Virtual Event Trigger
-                try:
-                    w.event_generate("<<Paste>>")
-                except: pass
-                return "break"
-        
-        if txt:
-            try:
-                # Insert at cursor, replacing selection if exists
-                if isinstance(w, (tk.Entry, tk.Text)):
+            pass
+        return "break"
+
+    def perfect_paste(self, w):
+        # Prioritize Manual Insertion to avoid double-pasting and ensure 100% control
+        try:
+            txt = ""
+            try: txt = self.root.clipboard_get()
+            except: 
+                try: txt = self.root.selection_get(selection='CLIPBOARD')
+                except: 
+                    # Last ditch fallback to virtual event if manual fails
+                    try: w.event_generate("<<Paste>>")
+                    except: pass
+                    return "break"
+            
+            if txt:
+                # Handle Entry/Combobox
+                if hasattr(w, 'selection_range') and not isinstance(w, tk.Text):
                     try:
-                        if w.selection_present():
-                            w.delete(tk.SEL_FIRST, tk.SEL_LAST)
+                        if w.selection_present(): w.delete(tk.SEL_FIRST, tk.SEL_LAST)
                     except: pass
                     w.insert(tk.INSERT, txt)
-            except: pass
+                # Handle Text widget
+                elif isinstance(w, tk.Text):
+                    try:
+                        if w.tag_ranges(tk.SEL): w.delete(tk.SEL_FIRST, tk.SEL_LAST)
+                    except: pass
+                    w.insert(tk.INSERT, txt)
+        except: pass
         return "break"
 
-    def handle_copy(self):
-        w = self.root.focus_get()
-        if w:
-            try: w.event_generate("<<Copy>>")
-            except: pass
-        return "break"
-
-    def handle_cut(self):
-        w = self.root.focus_get()
-        if w:
-            try: w.event_generate("<<Cut>>")
-            except: pass
-        return "break"
-
-    def handle_select_all(self):
-        w = self.root.focus_get()
+    def perfect_select_all(self, w):
         try:
-            if isinstance(w, tk.Entry):
+            if hasattr(w, 'selection_range'):
                 w.selection_range(0, tk.END)
                 w.icursor(tk.END)
-            elif isinstance(w, tk.Text):
+            if isinstance(w, tk.Text):
                 w.tag_add(tk.SEL, "1.0", "end")
         except: pass
         return "break"
@@ -554,9 +551,9 @@ class PremiumStoreManager:
         m = tk.Menu(w, tearoff=0)
         m.add_command(label="نسخ (Copy)", command=lambda: w.event_generate("<<Copy>>"))
         m.add_command(label="قص (Cut)", command=lambda: w.event_generate("<<Cut>>"))
-        m.add_command(label="لصق (Paste)", command=self.handle_paste)
+        m.add_command(label="لصق (Paste)", command=lambda: self.handle_paste(w))
         m.add_separator()
-        m.add_command(label="تحديد الكل", command=self.handle_select_all)
+        m.add_command(label="تحديد الكل", command=lambda: self.handle_select_all(w))
         w.bind("<Button-3>", lambda e: [w.focus_set(), m.post(e.x_root, e.y_root)])
 
     def add_imgs(self):

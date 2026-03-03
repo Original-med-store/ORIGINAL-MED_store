@@ -119,6 +119,17 @@ var products = [
         "images": [],
         "image": "",
         "id": 10
+    },
+    {
+        "name": "\u062b\u064a\u062b\u0628\u064a",
+        "price": 4,
+        "old_price": 33,
+        "stock": 2,
+        "description": "\u0633\u0633\u0633\u0633",
+        "category_id": 4,
+        "images": [],
+        "image": "",
+        "id": 11
     }
 ];
 var categories = [
@@ -170,6 +181,21 @@ var categories = [
     {
         "id": 11,
         "name": "\u0628\u0644\u0644\u0642\u0644\u0641\u0627\u06414\u0627\u0641\u0641\u0641\u0628\u0628\u0628\u0628",
+        "image": "https://via.placeholder.com/150"
+    },
+    {
+        "id": 12,
+        "name": "\u0628\u0644\u0644\u0642\u0644\u0641\u0627\u06414\u0627\u0641\u0641\u0641\u0628\u0628\u0628\u0628\u0628",
+        "image": "https://via.placeholder.com/150"
+    },
+    {
+        "id": 13,
+        "name": "\u0628\u0644\u0644\u0642\u0644\u0641\u0627\u06414\u0627\u0641\u0641\u0641\u0628\u0628\u0628\u0628\u0628\u0628",
+        "image": "https://via.placeholder.com/150"
+    },
+    {
+        "id": 14,
+        "name": "\u0628\u0644\u0644\u0642\u0644\u0641\u0627\u06414\u0627\u0641\u0641\u0641\u0628\u0628\u0628\u0628\u0628\u0628 \u0628",
         "image": "https://via.placeholder.com/150"
     }
 ];
