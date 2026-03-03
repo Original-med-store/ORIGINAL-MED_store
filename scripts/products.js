@@ -89,7 +89,7 @@ var products = [
     },
     {
         "name": "\u0633\u064a\u0633\u064a",
-        "price": 22,
+        "price": 33333,
         "old_price": 33,
         "stock": 4,
         "description": "\u064a\u0628\u064a\u0628",
