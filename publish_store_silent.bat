@@ -2,24 +2,24 @@
 setlocal enabledelayedexpansion
 cd /d "%~dp0"
 
+:: Nuclear Background Sync Protocol
 set "LOG_FILE=sync_status.log"
-echo %date% %time% - Nuclear Sync Start > "%LOG_FILE%"
+echo %date% %time% - Background Sync Starting... > "%LOG_FILE%"
 
-:: Typos Check: Reset everything and call git explicitly
-:: 1. Force Break any Git Deadlocks
+:: 1. Force Break Deadlocks
 git rebase --abort >nul 2>&1
 git merge --abort >nul 2>&1
 if exist ".git\rebase-merge" rmdir /s /q ".git\rebase-merge" >> "%LOG_FILE%" 2>&1
 if exist ".git\rebase-apply" rmdir /s /q ".git\rebase-apply" >> "%LOG_FILE%" 2>&1
 
-:: 2. Ensure log file is ignored
+:: 2. Ensure logs are ignored
 git rm --cached "%LOG_FILE%" >nul 2>&1
 
-:: 3. Aggressive Stage and Commit
+:: 3. Atomic Commit
 git add . >> "%LOG_FILE%" 2>&1
-git commit -m "Auto-update %date% %time%" >> "%LOG_FILE%" 2>&1
+git commit -m "Auto-sync %date% %time%" >> "%LOG_FILE%" 2>&1
 
-:: 4. Forced Fetch and Rebase
+:: 4. Forced Sync
 git fetch origin main >> "%LOG_FILE%" 2>&1
 git pull origin main --rebase --autostash -X ours >> "%LOG_FILE%" 2>&1
 
