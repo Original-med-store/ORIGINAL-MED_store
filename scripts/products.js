@@ -156,5 +156,20 @@ var categories = [
         "id": 8,
         "name": "\u0628\u0644\u0644\u0642\u0644\u0641\u0627\u06414\u0627\u0641\u0641\u0641",
         "image": "https://via.placeholder.com/150"
+    },
+    {
+        "id": 9,
+        "name": "\u0628\u0644\u0644\u0642\u0644\u0641\u0627\u06414\u0627\u0641\u0641\u0641\u0628\u0628",
+        "image": "https://via.placeholder.com/150"
+    },
+    {
+        "id": 10,
+        "name": "\u0628\u0644\u0644\u0642\u0644\u0641\u0627\u06414\u0627\u0641\u0641\u0641\u0628\u0628\u0628",
+        "image": "https://via.placeholder.com/150"
+    },
+    {
+        "id": 11,
+        "name": "\u0628\u0644\u0644\u0642\u0644\u0641\u0627\u06414\u0627\u0641\u0641\u0641\u0628\u0628\u0628\u0628",
+        "image": "https://via.placeholder.com/150"
     }
 ];
