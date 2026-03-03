@@ -108,6 +108,17 @@ var products = [
         "images": [],
         "image": "",
         "id": 9
+    },
+    {
+        "name": "\u064a\u0628\u064a",
+        "price": 22,
+        "old_price": 33,
+        "stock": 4,
+        "description": "\u064a\u064a\u0628\u0628\u064a",
+        "category_id": 3,
+        "images": [],
+        "image": "",
+        "id": 10
     }
 ];
 var categories = [
