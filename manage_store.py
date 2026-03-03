@@ -412,11 +412,16 @@ class StoreManagerApp:
         try:
             w = self.root.focus_get()
             if isinstance(w, (tk.Entry, tk.Text)):
-                # Directly get from clipboard to bypass virtual event issues
-                txt = self.root.clipboard_get()
-                if isinstance(w, tk.Entry):
-                    w.insert(tk.INSERT, txt)
-                else:
+                # Use Tcl's built-in clipboard selection for maximum compatibility
+                try:
+                    txt = self.root.selection_get(selection='CLIPBOARD')
+                    if isinstance(w, tk.Entry):
+                        w.insert(tk.INSERT, txt)
+                    else:
+                        w.insert(tk.INSERT, txt)
+                except:
+                    # Fallback to root.clipboard_get()
+                    txt = self.root.clipboard_get()
                     w.insert(tk.INSERT, txt)
         except: pass
         return "break"

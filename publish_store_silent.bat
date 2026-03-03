@@ -2,31 +2,42 @@
 setlocal enabledelayedexpansion
 cd /d "%~dp0"
 
-:: Initial cleanup to avoid rebase traps
+:: Use a temporary log file to avoid file-locks if Python is reading the main one
+set TEMP_LOG=logs\publish_temp.log
+set FINAL_LOG=logs\publish.log
+
+if not exist "logs" mkdir "logs"
+echo %date% %time% - Atomic Sync Start > %TEMP_LOG%
+
+:: Cleanup Git State
 git rebase --abort >nul 2>&1
 git am --abort >nul 2>&1
 
-:: Configure Git to ignore changes in logs if they made it to the index previously
-git rm --cached -r logs >nul 2>&1
+:: Remove logs from index permanently to stop conflicts
+git rm --cached -r logs >> %TEMP_LOG% 2>&1
 
-:: Aggressive Prep
-git add . >> logs\publish.log 2>&1
-git commit -m "Auto-update %date% %time%" >> logs\publish.log 2>&1
+:: Stage and Commit
+git add -A >> %TEMP_LOG% 2>&1
+git commit -m "Auto-update %date% %time%" >> %TEMP_LOG% 2>&1
 
-:: Forced Fetch
-git fetch origin main >> logs\publish.log 2>&1
+:: Sync with Remote
+git fetch origin main >> %TEMP_LOG% 2>&1
+git pull origin main --rebase --autostash -X ours >> %TEMP_LOG% 2>&1
 
-:: Attempt pull with rebase
-:: We use --autostash to handle ANY occasional dirty state
-git pull origin main --rebase --autostash -X ours >> logs\publish.log 2>&1
+:: Push
+git push origin main >> %TEMP_LOG% 2>&1
 
-:: Triple check push
-git push origin main >> logs\publish.log 2>&1
-
+set RE=0
 if %errorlevel% equ 0 (
-    echo [SUCCESS] >> logs\publish.log
-    exit /b 0
+    echo [SUCCESS] >> %TEMP_LOG%
+    set RE=0
 ) else (
-    echo [CRITICAL ERROR] >> logs\publish.log
-    exit /b 1
+    echo [CRITICAL ERROR] >> %TEMP_LOG%
+    set RE=1
 )
+
+:: Swap logs only at the very end
+type %TEMP_LOG% > %FINAL_LOG%
+del %TEMP_LOG%
+
+exit /b %RE%
