@@ -146,5 +146,15 @@ var categories = [
         "id": 6,
         "name": "\u064a\u0628\u064a\u0628\u064a\u064a",
         "image": "assets/3333.jpg"
+    },
+    {
+        "id": 7,
+        "name": "\u0628\u0644\u0644\u0642\u0644\u0641\u0627\u06414\u0627\u0641",
+        "image": "https://via.placeholder.com/150"
+    },
+    {
+        "id": 8,
+        "name": "\u0628\u0644\u0644\u0642\u0644\u0641\u0627\u06414\u0627\u0641\u0641\u0641",
+        "image": "https://via.placeholder.com/150"
     }
 ];
