@@ -49,6 +49,10 @@ class StoreManagerApp:
         # Global Keyboard Bindings (Intelligent handling)
         self.root.bind_all("<Control-v>", self.handle_paste)
         self.root.bind_all("<Control-V>", self.handle_paste)
+        self.root.bind_all("<Control-c>", self.handle_copy)
+        self.root.bind_all("<Control-C>", self.handle_copy)
+        self.root.bind_all("<Control-x>", self.handle_cut)
+        self.root.bind_all("<Control-X>", self.handle_cut)
         self.root.bind_all("<Control-a>", self.handle_select_all)
         self.root.bind_all("<Control-A>", self.handle_select_all)
 
@@ -403,39 +407,77 @@ class StoreManagerApp:
     def on_mw(self, event):
         self.p_canvas.yview_scroll(int(-1*(event.delta/120)), "units")
 
-    def handle_paste(self, event):
+    def handle_paste(self, event=None):
         try:
-            txt = self.root.clipboard_get()
-            w = event.widget
-            if isinstance(w, (tk.Entry, tk.Text)): w.insert(tk.INSERT, txt)
+            w = self.root.focus_get()
+            if isinstance(w, (tk.Entry, tk.Text)):
+                w.event_generate("<<Paste>>")
         except: pass
         return "break"
 
-    def handle_select_all(self, event):
-        w = event.widget
-        if isinstance(w, tk.Entry): w.selection_range(0, tk.END); w.icursor(tk.END)
-        elif isinstance(w, tk.Text): w.tag_add(tk.SEL, "1.0", tk.END)
+    def handle_copy(self, event=None):
+        try:
+            w = self.root.focus_get()
+            if isinstance(w, (tk.Entry, tk.Text)):
+                w.event_generate("<<Copy>>")
+        except: pass
+        return "break"
+
+    def handle_cut(self, event=None):
+        try:
+            w = self.root.focus_get()
+            if isinstance(w, (tk.Entry, tk.Text)):
+                w.event_generate("<<Cut>>")
+        except: pass
+        return "break"
+
+    def handle_select_all(self, event=None):
+        try:
+            w = self.root.focus_get()
+            if isinstance(w, tk.Entry):
+                w.selection_range(0, tk.END)
+                w.icursor(tk.END)
+            elif isinstance(w, tk.Text):
+                w.tag_add(tk.SEL, "1.0", tk.END)
+        except: pass
         return "break"
 
     def attach_context_menu(self, w):
         m = tk.Menu(w, tearoff=0, font=("Cairo", 10))
-        m.add_command(label="نسخ", command=lambda: w.event_generate("<<Copy>>"))
-        m.add_command(label="قص", command=lambda: w.event_generate("<<Cut>>"))
-        m.add_command(label="لصق", command=lambda: self.handle_paste(tk.Event)) # Fake event
-        m.bind("<Leave>", lambda e: m.unpost())
-        w.bind("<Button-3>", lambda e: m.post(e.x_root, e.y_root))
+        m.add_command(label="نسخ (Copy)", command=lambda: w.event_generate("<<Copy>>"))
+        m.add_command(label="قص (Cut)", command=lambda: w.event_generate("<<Cut>>"))
+        m.add_command(label="لصق (Paste)", command=lambda: w.event_generate("<<Paste>>"))
+        m.add_separator()
+        m.add_command(label="تحديد الكل (Select All)", command=self.handle_select_all)
+        
+        def show_m(e):
+            w.focus_set()
+            m.post(e.x_root, e.y_root)
+        
+        w.bind("<Button-3>", show_m)
 
     def publish_changes(self):
         self.root.config(cursor="wait"); self.root.update()
         sh = os.path.join(BASE_DIR, 'publish_store_silent.bat')
-        # Use CREATE_NO_WINDOW (0x08000000) for silent execution
+        
+        # Ensure we've saved everything first
+        self.final_save()
+        
+        # Run script and capture ALL output for debugging
         r = subprocess.run([sh], capture_output=True, text=True, creationflags=0x08000000)
         self.root.config(cursor="")
-        if r.returncode == 0: 
+        
+        log_content = ""
+        try:
+            with open(os.path.join(BASE_DIR, 'logs', 'publish.log'), 'r', encoding='utf-8') as f:
+                log_content = f.read()
+        except: pass
+
+        if r.returncode == 0:
             messagebox.showinfo("نجاح", "تم الحفظ والنشر بنجاح على الموقع!")
         else:
-            # Handle the case where someone might have deleted the script or git isn't found
-            messagebox.showerror("خطأ في النشر", f"فشل النشر التلقائي:\n{r.stderr or r.stdout}")
+            err_msg = r.stderr if r.stderr.strip() else (log_content if log_content.strip() else r.stdout)
+            messagebox.showerror("خطأ في النشر", f"فشل النشر التلقائي. تفاصيل الخطأ:\n\n{err_msg}")
 
     def on_cat_click(self, e):
         sel = self.cat_list.curselection()

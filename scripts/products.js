@@ -87,6 +87,17 @@ var products = [
         ],
         "image": "assets/3333.jpg",
         "id": 7
+    },
+    {
+        "name": "سيسي",
+        "price": 22,
+        "old_price": 33,
+        "stock": 4,
+        "description": "يبيب",
+        "category_id": 3,
+        "images": [],
+        "image": "",
+        "id": 8
     }
 ];
 var categories = [
