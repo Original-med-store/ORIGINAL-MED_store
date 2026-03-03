@@ -136,5 +136,10 @@ var categories = [
         "id": 4,
         "name": "\u064a\u064a\u064a\u064a\u064a\u064a",
         "image": "assets/3333.jpg"
+    },
+    {
+        "id": 5,
+        "name": "\u064a\u0628\u064a\u0628\u064a",
+        "image": "assets/3333.jpg"
     }
 ];

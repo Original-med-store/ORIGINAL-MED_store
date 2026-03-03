@@ -479,48 +479,75 @@ class PremiumStoreManager:
     def clear_cat_fields(self):
         self.cat_name_var.set(""); self.cat_img_label.config(text="لا توجد صورة"); self.cur_cat_img = None
 
-    # --- Utilities ---
+    # --- Utilities (Universal Interaction Engine) ---
     def setup_bindings(self):
-        self.root.bind_all("<Control-v>", lambda e: self.handle_paste())
-        self.root.bind_all("<Control-V>", lambda e: self.handle_paste())
-        self.root.bind_all("<Control-c>", lambda e: self.handle_copy())
-        self.root.bind_all("<Control-C>", lambda e: self.handle_copy())
-        self.root.bind_all("<Control-x>", lambda e: self.handle_cut())
-        self.root.bind_all("<Control-X>", lambda e: self.handle_cut())
-        self.root.bind_all("<Control-a>", lambda e: self.handle_select_all())
-        self.root.bind_all("<Control-A>", lambda e: self.handle_select_all())
+        # Bind most reliable behavior to the widget classes themselves
+        classes = ["Entry", "Text", "TCombobox"]
+        for cls in classes:
+            self.root.bind_class(cls, "<Control-v>", lambda e: self.handle_paste())
+            self.root.bind_class(cls, "<Control-V>", lambda e: self.handle_paste())
+            self.root.bind_class(cls, "<Control-c>", lambda e: self.handle_copy())
+            self.root.bind_class(cls, "<Control-C>", lambda e: self.handle_copy())
+            self.root.bind_class(cls, "<Control-x>", lambda e: self.handle_cut())
+            self.root.bind_class(cls, "<Control-X>", lambda e: self.handle_cut())
+            self.root.bind_class(cls, "<Control-a>", lambda e: self.handle_select_all())
+            self.root.bind_class(cls, "<Control-A>", lambda e: self.handle_select_all())
 
     def handle_paste(self):
         w = self.root.focus_get()
-        if not isinstance(w, (tk.Entry, tk.Text)): return "break"
+        if not w: return "break"
+        
+        txt = ""
+        # Multi-Method Clipboard Retrieval
         try:
+            # Method 1: Tcl Selection
             txt = self.root.selection_get(selection='CLIPBOARD')
         except:
-            try: txt = self.root.clipboard_get()
-            except: 
-                w.event_generate("<<Paste>>")
+            try:
+                # Method 2: Standard Tk Board
+                txt = self.root.clipboard_get()
+            except:
+                # Method 3: Virtual Event Trigger
+                try:
+                    w.event_generate("<<Paste>>")
+                except: pass
                 return "break"
+        
         if txt:
             try:
-                if w.selection_present(): w.delete(tk.SEL_FIRST, tk.SEL_LAST)
+                # Insert at cursor, replacing selection if exists
+                if isinstance(w, (tk.Entry, tk.Text)):
+                    try:
+                        if w.selection_present():
+                            w.delete(tk.SEL_FIRST, tk.SEL_LAST)
+                    except: pass
+                    w.insert(tk.INSERT, txt)
             except: pass
-            w.insert(tk.INSERT, txt)
         return "break"
 
     def handle_copy(self):
         w = self.root.focus_get()
-        if isinstance(w, (tk.Entry, tk.Text)): w.event_generate("<<Copy>>")
+        if w:
+            try: w.event_generate("<<Copy>>")
+            except: pass
         return "break"
 
     def handle_cut(self):
         w = self.root.focus_get()
-        if isinstance(w, (tk.Entry, tk.Text)): w.event_generate("<<Cut>>")
+        if w:
+            try: w.event_generate("<<Cut>>")
+            except: pass
         return "break"
 
     def handle_select_all(self):
         w = self.root.focus_get()
-        if isinstance(w, tk.Entry): w.selection_range(0, tk.END); w.icursor(tk.END)
-        elif isinstance(w, tk.Text): w.tag_add(tk.SEL, "1.0", tk.END)
+        try:
+            if isinstance(w, tk.Entry):
+                w.selection_range(0, tk.END)
+                w.icursor(tk.END)
+            elif isinstance(w, tk.Text):
+                w.tag_add(tk.SEL, "1.0", "end")
+        except: pass
         return "break"
 
     def attach_context_menu(self, w):
