@@ -11,6 +11,10 @@ import time
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PRODUCTS_FILE = os.path.join(BASE_DIR, 'scripts', 'products.js')
 ASSETS_DIR = os.path.join(BASE_DIR, 'assets')
+# Radical Log Isolation: Move logs out of the workspace to avoid Git/File-Lock deadlocks
+TEMP_LOG_DIR = os.path.join(os.environ.get('TEMP', BASE_DIR), 'original-med-logs')
+if not os.path.exists(TEMP_LOG_DIR): os.makedirs(TEMP_LOG_DIR)
+LOG_FILE = os.path.join(TEMP_LOG_DIR, 'publish_last.log')
 
 if not os.path.exists(ASSETS_DIR):
     os.makedirs(ASSETS_DIR)
@@ -471,24 +475,28 @@ class StoreManagerApp:
         self.root.config(cursor="wait"); self.root.update()
         sh = os.path.join(BASE_DIR, 'publish_store_silent.bat')
         
-        # Ensure we've saved everything first
         self.final_save()
         
-        # Run script and capture ALL output for debugging
+        # Radical recovery: Deleting any old log before starting
+        if os.path.exists(LOG_FILE):
+            try: os.remove(LOG_FILE)
+            except: pass
+
         r = subprocess.run([sh], capture_output=True, text=True, creationflags=0x08000000)
         self.root.config(cursor="")
         
         log_content = ""
         try:
-            with open(os.path.join(BASE_DIR, 'logs', 'publish.log'), 'r', encoding='utf-8') as f:
-                log_content = f.read()
+            if os.path.exists(LOG_FILE):
+                with open(LOG_FILE, 'r', encoding='utf-8') as f:
+                    log_content = f.read()
         except: pass
 
         if r.returncode == 0:
             messagebox.showinfo("نجاح", "تم الحفظ والنشر بنجاح على الموقع!")
         else:
             err_msg = r.stderr if r.stderr.strip() else (log_content if log_content.strip() else r.stdout)
-            messagebox.showerror("خطأ في النشر", f"فشل النشر التلقائي. تفاصيل الخطأ:\n\n{err_msg}")
+            messagebox.showerror("خطأ في النشر الجذري", f"تعذر النشر التلقائي. تفاصيل العملية:\n\n{err_msg}")
 
     def on_cat_click(self, e):
         sel = self.cat_list.curselection()

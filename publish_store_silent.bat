@@ -2,42 +2,46 @@
 setlocal enabledelayedexpansion
 cd /d "%~dp0"
 
-:: Use a temporary log file to avoid file-locks if Python is reading the main one
-set TEMP_LOG=logs\publish_temp.log
-set FINAL_LOG=logs\publish.log
+:: Radical Reset: Moving logs to system TEMP to avoid file locks and Git conflicts
+set LOG_DIR=%TEMP%\original-med-logs
+if not exist "%LOG_DIR%" mkdir "%LOG_DIR%"
+set LOG_FILE=%LOG_DIR%\publish_last.log
 
-if not exist "logs" mkdir "logs"
-echo %date% %time% - Atomic Sync Start > %TEMP_LOG%
+echo %date% %time% - Radical Sync Start > "%LOG_FILE%"
 
-:: Cleanup Git State
+:: 1. Force Break any Git Deadlocks (Rebase, Merge, AM)
+if exist ".git\rebase-merge" rmdir /s /q ".git\rebase-merge" >> "%LOG_FILE%" 2>&1
+if exist ".git\rebase-apply" rmdir /s /q ".git\rebase-apply" >> "%LOG_FILE%" 2>&1
+if exist ".git\MERGE_HEAD" del /f /q ".git\MERGE_HEAD" >> "%LOG_FILE%" 2>&1
 git rebase --abort >nul 2>&1
-git am --abort >nul 2>&1
+git merge --abort >nul 2>&1
 
-:: Remove logs from index permanently to stop conflicts
-git rm --cached -r logs >> %TEMP_LOG% 2>&1
+:: 2. Clean Index from any accidentally tracked log files
+git rm --cached -r logs >nul 2>&1
 
-:: Stage and Commit
-git add -A >> %TEMP_LOG% 2>&1
-git commit -m "Auto-update %date% %time%" >> %TEMP_LOG% 2>&1
+:: 3. Aggressive Stage and Commit
+git add -A >> "%LOG_FILE%" 2>&1
+git commit -m "Auto-update %date% %time%" >> "%LOG_FILE%" 2>&1
 
-:: Sync with Remote
-git fetch origin main >> %TEMP_LOG% 2>&1
-git pull origin main --rebase --autostash -X ours >> %TEMP_LOG% 2>&1
+:: 4. Forced Sync Sequence
+git fetch origin main >> "%LOG_FILE%" 2>&1
 
-:: Push
-git push origin main >> %TEMP_LOG% 2>&1
-
-set RE=0
-if %errorlevel% equ 0 (
-    echo [SUCCESS] >> %TEMP_LOG%
-    set RE=0
-) else (
-    echo [CRITICAL ERROR] >> %TEMP_LOG%
-    set RE=1
+:: Use a hard reset strategy if pull rebase fails (The Radical Solution)
+git pull origin main --rebase --autostash -X ours >> "%LOG_FILE%" 2>&1
+if %errorlevel% neq 0 (
+    echo [RECOVERY] Pull failed, attempting hard recovery >> "%LOG_FILE%"
+    git add -A >> "%LOG_FILE%" 2>&1
+    git rebase --skip >> "%LOG_FILE%" 2>&1
+    git pull origin main --rebase --autostash -X ours >> "%LOG_FILE%" 2>&1
 )
 
-:: Swap logs only at the very end
-type %TEMP_LOG% > %FINAL_LOG%
-del %TEMP_LOG%
+:: 5. Final Push
+git push origin main >> "%LOG_FILE%" 2>&1
 
-exit /b %RE%
+if %errorlevel% equ 0 (
+    echo [SUCCESS] >> "%LOG_FILE%"
+    exit /b 0
+) else (
+    echo [FATAL ERROR] >> "%LOG_FILE%"
+    exit /b 1
+)
