@@ -1,6 +1,8 @@
 logs/
-__pycache__/
+sync_status.log
 *.pyc
+__pycache__/
 .DS_Store
-assets/
+temp_backup/
+assets/*
 !assets/.gitkeep

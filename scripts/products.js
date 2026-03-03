@@ -76,7 +76,7 @@ var products = [
     },
     {
         "name": "\u0621\u0624\u0621\u0624",
-        "price": 11,
+        "price": 33333311,
         "old_price": 222,
         "stock": 3,
         "description": "\u0621\u0628\u064a\u0628",

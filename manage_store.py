@@ -12,10 +12,14 @@ import threading
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PRODUCTS_FILE = os.path.join(BASE_DIR, 'scripts', 'products.js')
 ASSETS_DIR = os.path.join(BASE_DIR, 'assets')
-LOG_FILE = os.path.join(BASE_DIR, 'sync_status.log')
+# Isolated logs
+LOG_DIR = os.path.join(BASE_DIR, 'logs')
+LOG_FILE = os.path.join(LOG_DIR, 'sync.log')
 
 if not os.path.exists(ASSETS_DIR):
     os.makedirs(ASSETS_DIR)
+if not os.path.exists(LOG_DIR):
+    os.makedirs(LOG_DIR)
 
 class PremiumStoreManager:
     def __init__(self, root):
