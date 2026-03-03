@@ -24,12 +24,10 @@ class StoreManagerApp:
         self.root.configure(bg="#f8fafc")
         
         # Global Bindings for common actions
-        self.root.bind_all("<Control-a>", lambda e: self.select_all(e.widget))
-        self.root.bind_all("<Control-A>", lambda e: self.select_all(e.widget))
-        self.root.bind_all("<Control-v>", lambda e: self.force_paste(e.widget))
-        self.root.bind_all("<Control-V>", lambda e: self.force_paste(e.widget))
-        self.root.bind_all("<Control-c>", lambda e: e.widget.event_generate("<<Copy>>") if hasattr(e.widget, 'event_generate') else None)
-        self.root.bind_all("<Control-C>", lambda e: e.widget.event_generate("<<Copy>>") if hasattr(e.widget, 'event_generate') else None)
+        self.root.bind_all("<Control-v>", self.force_paste)
+        self.root.bind_all("<Control-V>", self.force_paste)
+        self.root.bind_all("<Control-a>", self.select_all)
+        self.root.bind_all("<Control-A>", self.select_all)
 
         # Style
         self.style = ttk.Style()
@@ -134,8 +132,10 @@ class StoreManagerApp:
         canvas.create_window((0, 0), window=scrollable_frame, anchor="nw", width=430)
         canvas.configure(yscrollcommand=scrollbar.set)
 
-        canvas.pack(side="left", fill="both", expand=True)
+        canvas.pack(side="left", fill="both", expand=True, padx=5)
         scrollbar.pack(side="right", fill="y")
+
+        self.form_canvas = canvas # Store for scrolling
 
         # Content
         font_lbl = ("Cairo", 11, "bold")
@@ -208,6 +208,14 @@ class StoreManagerApp:
         
         tk.Button(sub_btn_frame, text="حذف المنتج", command=self.delete_product, bg="#dc2626", fg="white").pack(side="left", fill="x", expand=True, padx=2)
         tk.Button(sub_btn_frame, text="تفريغ الحقول", command=self.clear_product_form, bg="#64748b", fg="white").pack(side="right", fill="x", expand=True, padx=2)
+
+        # Bind MouseWheel to the whole section
+        def _bind_mw(w):
+            w.bind("<MouseWheel>", self._on_mousewheel)
+            for child in w.winfo_children():
+                _bind_mw(child)
+        _bind_mw(canvas)
+        _bind_mw(scrollable_frame)
 
     # ==========================
     # Categories Tab
@@ -382,14 +390,23 @@ class StoreManagerApp:
         # Resolve Category ID
         cat_id = next((c["id"] for c in self.categories if c["name"] == cat_name), None)
 
+        # Validate numeric inputs
+        try:
+            p_val = int(re.sub(r'[^\d]', '', price)) if price else 0
+            op_val = int(re.sub(r'[^\d]', '', old_price)) if old_price else None
+            s_val = int(re.sub(r'[^\d]', '', stock)) if stock else 0
+        except ValueError:
+            messagebox.showerror("خطأ", "السعر والمخزون يجب أن يكونا أرقاماً فقط")
+            return None
+
         final_images = self.process_images(self.selected_images)
         main_image = final_images[0] if final_images else "https://via.placeholder.com/300"
         
         data = {
             "name": name,
-            "price": int(price),
-            "old_price": int(old_price) if old_price else None,
-            "stock": int(stock) if stock else None,
+            "price": p_val,
+            "old_price": op_val,
+            "stock": s_val,
             "description": desc,
             "category_id": cat_id,
             "image": main_image,
@@ -624,6 +641,33 @@ class StoreManagerApp:
         elif isinstance(widget, tk.Entry):
             widget.selection_range(0, tk.END)
             widget.icursor(tk.END)
+
+    def _on_mousewheel(self, event):
+        if hasattr(self, 'form_canvas'):
+            self.form_canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+
+    def force_paste(self, event_or_widget):
+        widget = event_or_widget.widget if hasattr(event_or_widget, 'widget') else event_or_widget
+        try:
+            text = self.root.clipboard_get()
+            if isinstance(widget, tk.Text):
+                widget.insert(tk.INSERT, text)
+            elif isinstance(widget, tk.Entry):
+                widget.insert(tk.INSERT, text)
+        except:
+            pass
+        return "break"
+
+    def select_all(self, event_or_widget):
+        widget = event_or_widget.widget if hasattr(event_or_widget, 'widget') else event_or_widget
+        if isinstance(widget, tk.Text):
+            widget.tag_add(tk.SEL, "1.0", tk.END)
+            widget.mark_set(tk.INSERT, "1.0")
+            widget.see(tk.INSERT)
+        elif isinstance(widget, tk.Entry):
+            widget.selection_range(0, tk.END)
+            widget.icursor(tk.END)
+        return "break"
         return "break"
 
 if __name__ == "__main__":

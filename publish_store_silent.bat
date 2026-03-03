@@ -10,12 +10,12 @@ if not exist "logs" mkdir "logs"
 set LOG_FILE=logs\publish.log
 echo %date% %time% - Starting atomic publish... > %LOG_FILE%
 
-:: Ensure we are on main and clean
+:: Standard fetch and sync
 git fetch origin main >> %LOG_FILE% 2>&1
 git add . >> %LOG_FILE% 2>&1
 git commit -m "Auto-update from Store Manager" >> %LOG_FILE% 2>&1
 
-:: Pull with 'ours' strategy for logs/metadata but keep local for code/data
+:: Rebase with ours strategy for conflicts (logs/metadata)
 git pull origin main --rebase -X ours >> %LOG_FILE% 2>&1
 
 :: Final Push
