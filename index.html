@@ -35,7 +35,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="styles/index.css?v=2">
+    <link rel="stylesheet" href="styles/index.css?v=3">
 </head>
 
 <body>
@@ -51,9 +51,11 @@
                 <a href="#" class="active">الرئيسية</a>
                 <a href="#catalog">المتجر</a>
                 <a href="#" onclick="toggleContactSheet(); return false;">تواصل معنا</a>
-                <button class="auth-btn" id="navAuthBtn" onclick="toggleAuthModal('register')">
-                    <i class="fa-solid fa-user-plus"></i> تسجيل
-                </button>
+                <div id="userProfileArea" style="display: inline-block;">
+                    <button class="auth-btn" id="navAuthBtn" onclick="toggleAuthModal('register')">
+                        <i class="fa-solid fa-user-plus"></i> تسجيل
+                    </button>
+                </div>
             </div>
             <!-- Search Box (Moved up for mobile sticky header like Amazon) -->
             <div class="search-container" style="position: relative; flex: 1; max-width: 500px; margin: 0 20px;">
@@ -306,8 +308,7 @@
                         <i class="fa-solid fa-lock"></i>
                         <input type="password" id="loginPassword" placeholder="كلمة المرور" required>
                     </div>
-                    <button type="button" class="primary-btn checkout-btn"
-                        onclick="alert('خاصية تسجيل الدخول قيد التطوير.')">دخول <i
+                    <button type="submit" class="primary-btn checkout-btn">دخول <i
                             class="fa-solid fa-right-to-bracket"></i></button>
                 </form>
 
@@ -329,8 +330,7 @@
                         <input type="password" id="regPassword" placeholder="كلمة المرور (6 أحرف أو أكثر)" required
                             minlength="6">
                     </div>
-                    <button type="button" class="primary-btn checkout-btn"
-                        onclick="alert('خاصية تسجيل حساب جديد قيد التطوير.')">تسجيل <i
+                    <button type="submit" class="primary-btn checkout-btn">تسجيل <i
                             class="fa-solid fa-user-plus"></i></button>
                 </form>
             </div>
@@ -459,10 +459,10 @@
     </footer>
 
     <!-- Products Data from Python Script Generation -->
-    <script src="scripts/products.js?v=1772569755"></script>
+    <script src="scripts/products.js?v=1772569911"></script>
 
     <!-- Custom Application Logic integrating Medical Store static arrays with new UI flows -->
-    <script src="scripts/app.js?v=2"></script>
+    <script src="scripts/app.js?v=3"></script>
 </body>
 
 </html>

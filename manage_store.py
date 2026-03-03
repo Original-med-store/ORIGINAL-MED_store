@@ -576,6 +576,78 @@ class PremiumStoreManager:
         self.p_desc.delete("1.0", tk.END); self.selected_images = []; self.img_box.delete(0, tk.END)
         self.p_cat.set("")
 
+    def on_cat_click(self, e):
+        sel = self.cat_list.curselection()
+        if not sel: return
+        name = self.cat_list.get(sel[0])
+        cat = next((c for c in self.categories if c["name"] == name), None)
+        if cat:
+            self.cat_name_v.set(cat["name"])
+            self.cur_cat_img = cat.get("image", "")
+            self.cat_img_l.config(text=os.path.basename(self.cur_cat_img) if self.cur_cat_img else "لا توجد صورة")
+
+    def pick_cat_img(self):
+        f = filedialog.askopenfilename(filetypes=[("Images", "*.jpg;*.png;*.jpeg;*.webp")])
+        if f:
+            self.cur_cat_img = f
+            self.cat_img_l.config(text=os.path.basename(f))
+
+    def save_cat(self):
+        name = self.cat_name_v.get().strip()
+        if not name: return
+        
+        # Process Category Image
+        img_url = "https://via.placeholder.com/150"
+        if hasattr(self, 'cur_cat_img') and self.cur_cat_img:
+            if self.cur_cat_img.startswith("http") or self.cur_cat_img.startswith("assets/"):
+                img_url = self.cur_cat_img
+            else:
+                try:
+                    fn = os.path.basename(self.cur_cat_img)
+                    dst = os.path.join(ASSETS_DIR, fn)
+                    shutil.copy(self.cur_cat_img, dst)
+                    img_url = f"assets/{fn}"
+                except: img_url = self.cur_cat_img
+
+        sel = self.cat_list.curselection()
+        if sel: # Update
+            old_name = self.cat_list.get(sel[0])
+            cat = next((c for c in self.categories if c["name"] == old_name), None)
+            if cat:
+                cat["name"] = name
+                cat["image"] = img_url
+        else: # Add New
+            new_id = max([c["id"] for c in self.categories] or [0]) + 1
+            self.categories.append({"id": new_id, "name": name, "image": img_url})
+
+        self.final_save()
+        self.refresh_cat_list()
+        messagebox.showinfo("نجاح", "تم حفظ القسم بنجاح")
+
+    def del_cat(self):
+        sel = self.cat_list.curselection()
+        if not sel: return
+        if messagebox.askyesno("تأكيد", "هل أنت متأكد من حذف هذا القسم؟"):
+            name = self.cat_list.get(sel[0])
+            self.categories = [c for c in self.categories if c["name"] != name]
+            self.final_save()
+            self.refresh_cat_list()
+
+    def clear_cat(self):
+        self.cat_name_v.set("")
+        self.cur_cat_img = None
+        self.cat_img_l.config(text="لم يتم اختيار صورة")
+        self.cat_list.selection_clear(0, tk.END)
+    def add_imgs(self):
+        fs = filedialog.askopenfilenames(filetypes=[("Images", "*.jpg;*.png;*.jpeg;*.webp")])
+        for f in fs:
+            if f not in self.selected_images:
+                self.selected_images.append(f)
+                self.img_list.insert(tk.END, os.path.basename(f))
+    def del_img(self):
+        s = self.img_list.curselection()
+        if s: self.selected_images.pop(s[0]); self.img_list.delete(s[0])
+
 if __name__ == "__main__":
     r = tk.Tk()
     app = PremiumStoreManager(r)

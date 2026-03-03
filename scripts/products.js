@@ -152,6 +152,19 @@ var products = [
         "images": [],
         "image": "",
         "id": 13
+    },
+    {
+        "name": "\u062c\u0647\u0627\u0632 \u0633\u0643\u0631 \u0628\u0627\u064a\u0648 \u062a\u0633\u062a",
+        "price": 350,
+        "old_price": 430,
+        "stock": 0,
+        "description": "\u062c\u0647\u0627\u0632 \u0633\u0643\u0631 \u0628\u0627\u064a\u0648 \u062a\u064a\u0633\u062a \u0641\u0634\u064a\u062e",
+        "category_id": 1,
+        "images": [
+            "assets/images.jpeg"
+        ],
+        "image": "assets/images.jpeg",
+        "id": 14
     }
 ];
 var categories = [

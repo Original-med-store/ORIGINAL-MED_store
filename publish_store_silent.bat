@@ -34,6 +34,7 @@ if %errorlevel% neq 0 (
     git push origin main --force >> "%LOG_FILE%" 2>&1
 )
 
+set RE=0
 if %errorlevel% equ 0 (
     echo [SUCCESS] >> "%LOG_FILE%"
     exit /b 0
@@ -41,3 +42,9 @@ if %errorlevel% equ 0 (
     echo [ERROR] %errorlevel% >> "%LOG_FILE%"
     exit /b 1
 )
+
+:: Swap logs only at the very end
+type %TEMP_LOG% > %FINAL_LOG%
+del %TEMP_LOG%
+
+exit /b %RE%
