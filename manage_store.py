@@ -5,6 +5,7 @@ import re
 import os
 import shutil
 import subprocess
+import time
 
 # Paths
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -21,6 +22,14 @@ class StoreManagerApp:
         self.root.title("مدير متجر ORIGINAL_MED - النسخة المطورة")
         self.root.geometry("1000x700") # Increased size
         self.root.configure(bg="#f8fafc")
+        
+        # Global Bindings for common actions
+        self.root.bind_all("<Control-a>", lambda e: self.select_all(e.widget))
+        self.root.bind_all("<Control-A>", lambda e: self.select_all(e.widget))
+        self.root.bind_all("<Control-v>", lambda e: self.force_paste(e.widget))
+        self.root.bind_all("<Control-V>", lambda e: self.force_paste(e.widget))
+        self.root.bind_all("<Control-c>", lambda e: e.widget.event_generate("<<Copy>>") if hasattr(e.widget, 'event_generate') else None)
+        self.root.bind_all("<Control-C>", lambda e: e.widget.event_generate("<<Copy>>") if hasattr(e.widget, 'event_generate') else None)
 
         # Style
         self.style = ttk.Style()
@@ -86,20 +95,22 @@ class StoreManagerApp:
         self.create_product_form(form_frame)
 
     def create_product_table(self, parent):
-        columns = ("ID", "الاسم", "السعر", "السعر القديم", "القسم")
+        columns = ("id", "name", "price", "old_price", "stock", "category")
         self.tree = ttk.Treeview(parent, columns=columns, show="headings", selectmode="browse")
         
-        self.tree.heading("ID", text="ID")
-        self.tree.heading("الاسم", text="اسم المنتج")
-        self.tree.heading("السعر", text="السعر الحالي")
-        self.tree.heading("السعر القديم", text="السعر السابق")
-        self.tree.heading("القسم", text="القسم")
+        self.tree.heading("id", text="ID")
+        self.tree.heading("name", text="اسم المنتج")
+        self.tree.heading("price", text="السعر الحالي")
+        self.tree.heading("old_price", text="السعر السابق")
+        self.tree.heading("stock", text="المخزون")
+        self.tree.heading("category", text="القسم")
         
-        self.tree.column("ID", width=40, anchor="center")
-        self.tree.column("الاسم", width=150, anchor="e")
-        self.tree.column("السعر", width=80, anchor="center")
-        self.tree.column("السعر القديم", width=80, anchor="center")
-        self.tree.column("القسم", width=100, anchor="center")
+        self.tree.column("id", width=40, anchor="center")
+        self.tree.column("name", width=150, anchor="e")
+        self.tree.column("price", width=80, anchor="center")
+        self.tree.column("old_price", width=80, anchor="center")
+        self.tree.column("stock", width=80, anchor="center")
+        self.tree.column("category", width=100, anchor="center")
 
         scrollbar = ttk.Scrollbar(parent, orient="vertical", command=self.tree.yview)
         self.tree.configure(yscroll=scrollbar.set)
@@ -133,7 +144,9 @@ class StoreManagerApp:
         # Name
         tk.Label(scrollable_frame, text="اسم المنتج:", font=font_lbl, bg="#f8fafc").pack(anchor="e", pady=(10,0), padx=10)
         self.name_var = tk.StringVar()
-        tk.Entry(scrollable_frame, textvariable=self.name_var, justify="right", font=font_ent).pack(fill="x", padx=10)
+        ent_name = tk.Entry(scrollable_frame, textvariable=self.name_var, justify="right", font=font_ent)
+        ent_name.pack(fill="x", padx=10)
+        self.add_context_menu(ent_name)
 
         # Category
         tk.Label(scrollable_frame, text="القسم:", font=font_lbl, bg="#f8fafc").pack(anchor="e", pady=(10,0), padx=10)
@@ -147,16 +160,27 @@ class StoreManagerApp:
 
         tk.Label(price_frame, text="السعر الحالي:", font=font_lbl, bg="#f8fafc").pack(side="right")
         self.price_var = tk.StringVar()
-        tk.Entry(price_frame, textvariable=self.price_var, justify="center", font=font_ent, width=10).pack(side="right", padx=5)
+        ent_price = tk.Entry(price_frame, textvariable=self.price_var, justify="center", font=font_ent, width=10)
+        ent_price.pack(side="right", padx=5)
+        self.add_context_menu(ent_price)
 
         tk.Label(price_frame, text="السعر السابق (للخصم):", font=font_lbl, bg="#f8fafc", fg="#dc2626").pack(side="right", padx=(10,0))
         self.old_price_var = tk.StringVar()
-        tk.Entry(price_frame, textvariable=self.old_price_var, justify="center", font=font_ent, width=10).pack(side="right", padx=5)
+        ent_old = tk.Entry(price_frame, textvariable=self.old_price_var, justify="center", font=font_ent, width=10)
+        ent_old.pack(side="right", padx=5)
+        self.add_context_menu(ent_old)
+
+        tk.Label(price_frame, text="المخزون (الكمية):", font=font_lbl, bg="#f8fafc").pack(side="right", padx=(10,0))
+        self.stock_var = tk.StringVar()
+        ent_stock = tk.Entry(price_frame, textvariable=self.stock_var, justify="center", font=font_ent, width=8)
+        ent_stock.pack(side="right", padx=5)
+        self.add_context_menu(ent_stock)
 
         # Description
         tk.Label(scrollable_frame, text="الوصف:", font=font_lbl, bg="#f8fafc").pack(anchor="e", pady=(10,0), padx=10)
         self.desc_text = tk.Text(scrollable_frame, height=4, font=font_ent)
         self.desc_text.pack(fill="x", padx=10)
+        self.add_context_menu(self.desc_text)
 
         # Images
         tk.Label(scrollable_frame, text="صور المنتج (يمكن اختيار أكثر من صورة):", font=font_lbl, bg="#f8fafc").pack(anchor="e", pady=(10,0), padx=10)
@@ -212,7 +236,9 @@ class StoreManagerApp:
 
         tk.Label(form_frame, text="اسم القسم:", font=font_lbl, bg="#f8fafc").pack(anchor="e", pady=(20,0), padx=20)
         self.cat_name_var = tk.StringVar()
-        tk.Entry(form_frame, textvariable=self.cat_name_var, justify="right", font=font_ent).pack(fill="x", padx=20)
+        cat_ent = tk.Entry(form_frame, textvariable=self.cat_name_var, justify="right", font=font_ent)
+        cat_ent.pack(fill="x", padx=20)
+        self.add_context_menu(cat_ent)
 
         tk.Label(form_frame, text="صورة القسم:", font=font_lbl, bg="#f8fafc").pack(anchor="e", pady=(20,0), padx=20)
         self.cat_img_path = None
@@ -269,8 +295,9 @@ class StoreManagerApp:
         
         for product in self.products:
             old_p = product.get("old_price", "")
+            stock = product.get("stock", "-")
             cat_name = next((c["name"] for c in self.categories if c["id"] == product.get("category_id")), "غير محدد")
-            self.tree.insert("", "end", values=(product.get("id"), product.get("name"), product.get("price"), old_p, cat_name))
+            self.tree.insert("", "end", values=(product.get("id"), product.get("name"), product.get("price"), old_p, stock, cat_name))
 
     def refresh_cat_list(self):
         self.cat_listbox.delete(0, tk.END)
@@ -294,6 +321,7 @@ class StoreManagerApp:
             self.name_var.set(product["name"])
             self.price_var.set(product["price"])
             self.old_price_var.set(product.get("old_price", ""))
+            self.stock_var.set(product.get("stock", ""))
             self.desc_text.delete("1.0", tk.END)
             self.desc_text.insert("1.0", product["description"])
             
@@ -332,6 +360,7 @@ class StoreManagerApp:
         self.name_var.set("")
         self.price_var.set("")
         self.old_price_var.set("")
+        self.stock_var.set("")
         self.category_var.set("")
         self.desc_text.delete("1.0", tk.END)
         self.selected_images = []
@@ -342,6 +371,7 @@ class StoreManagerApp:
         name = self.name_var.get().strip()
         price = self.price_var.get().strip()
         old_price = self.old_price_var.get().strip()
+        stock = self.stock_var.get().strip()
         desc = self.desc_text.get("1.0", tk.END).strip()
         cat_name = self.category_var.get()
         
@@ -359,6 +389,7 @@ class StoreManagerApp:
             "name": name,
             "price": int(price),
             "old_price": int(old_price) if old_price else None,
+            "stock": int(stock) if stock else None,
             "description": desc,
             "category_id": cat_id,
             "image": main_image,
@@ -547,6 +578,53 @@ class StoreManagerApp:
         except Exception as e:
             self.root.config(cursor="")
             messagebox.showerror("خطأ", f"فشل تشغيل سكربت النشر:\n{str(e)}")
+
+    def add_context_menu(self, widget):
+        menu = tk.Menu(widget, tearoff=0, font=("Cairo", 10))
+        menu.add_command(label="قص (Cut)", command=lambda: widget.event_generate("<<Cut>>"))
+        menu.add_command(label="نسخ (Copy)", command=lambda: widget.event_generate("<<Copy>>"))
+        menu.add_command(label="لصق (Paste)", command=lambda: self.force_paste(widget))
+        menu.add_separator()
+        menu.add_command(label="تحديد الكل (Select All)", command=lambda: self.select_all(widget))
+
+        def show_menu(event):
+            menu.post(event.x_root, event.y_root)
+
+        widget.bind("<Button-3>", show_menu)
+        
+        # Add basic keyboard bindings just in case
+        widget.bind("<Control-a>", lambda e: self.select_all(widget))
+        widget.bind("<Control-A>", lambda e: self.select_all(widget))
+        widget.bind("<Control-v>", lambda e: self.force_paste(widget))
+        widget.bind("<Control-V>", lambda e: self.force_paste(widget))
+
+    def force_paste(self, widget):
+        try:
+            if isinstance(widget, tk.Text):
+                try:
+                    text = widget.selection_get(selection='CLIPBOARD')
+                    widget.insert(tk.INSERT, text)
+                except:
+                    pass
+            elif isinstance(widget, tk.Entry):
+                try:
+                    text = widget.selection_get(selection='CLIPBOARD')
+                    widget.insert(tk.INSERT, text)
+                except:
+                    pass
+        except:
+            pass
+        return "break"
+
+    def select_all(self, widget):
+        if isinstance(widget, tk.Text):
+            widget.tag_add(tk.SEL, "1.0", tk.END)
+            widget.mark_set(tk.INSERT, "1.0")
+            widget.see(tk.INSERT)
+        elif isinstance(widget, tk.Entry):
+            widget.selection_range(0, tk.END)
+            widget.icursor(tk.END)
+        return "break"
 
 if __name__ == "__main__":
     root = tk.Tk()

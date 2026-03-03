@@ -580,6 +580,23 @@ main {
     border-color: rgba(0, 0, 0, 0.05);
     padding: 10px;
     margin-top: -10px;
+    margin-bottom: 20px;
+}
+
+@media (min-width: 769px) {
+    .categories-panel {
+        max-height: 800px !important;
+        opacity: 1 !important;
+        padding: 15px !important;
+        margin-bottom: 30px !important;
+        border-color: rgba(0, 0, 0, 0.05) !important;
+        overflow: visible !important;
+    }
+
+    .premium-filter-btn {
+        display: none !important;
+        /* Hide toggle button on desktop as its always open */
+    }
 }
 
 .categories-grid {

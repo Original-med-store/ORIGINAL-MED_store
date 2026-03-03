@@ -35,14 +35,16 @@ function init() {
     setupEventListeners();
     loadCustomerData();
 
-    // Feature Request: Categories panel should be always visible (Open by Default)
+    // Feature Request: Categories panel should be always visible on Desktop (Open by Default)
     const catPanel = document.getElementById('categoriesPanel');
     const openCategoriesBtn = document.getElementById('openCategoriesBtn');
-    if (catPanel) {
+
+    // Check if we are on desktop (width > 768px)
+    const isDesktop = window.innerWidth > 768;
+
+    if (catPanel && isDesktop) {
         catPanel.classList.add('show');
-    }
-    if (openCategoriesBtn) {
-        openCategoriesBtn.classList.add('active-btn');
+        if (openCategoriesBtn) openCategoriesBtn.classList.add('active-btn');
     }
 }
 
@@ -527,6 +529,10 @@ function toggleCategoriesPanel() {
 function closeCategoriesModal() {
     const categoriesPanel = document.getElementById('categoriesPanel');
     const btn = document.getElementById('openCategoriesBtn');
+
+    // On desktop, we don't auto-close the panel after selection
+    if (window.innerWidth > 768) return;
+
     if (categoriesPanel && categoriesPanel.classList.contains('show')) {
         categoriesPanel.classList.remove('show');
         if (btn) btn.classList.remove('active-btn');
