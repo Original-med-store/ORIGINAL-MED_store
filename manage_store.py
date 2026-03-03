@@ -47,14 +47,15 @@ class StoreManagerApp:
         self.setup_styles()
 
         # Global Keyboard Bindings (Intelligent handling)
-        self.root.bind_all("<Control-v>", self.handle_paste)
-        self.root.bind_all("<Control-V>", self.handle_paste)
-        self.root.bind_all("<Control-c>", self.handle_copy)
-        self.root.bind_all("<Control-C>", self.handle_copy)
-        self.root.bind_all("<Control-x>", self.handle_cut)
-        self.root.bind_all("<Control-X>", self.handle_cut)
-        self.root.bind_all("<Control-a>", self.handle_select_all)
-        self.root.bind_all("<Control-A>", self.handle_select_all)
+        # Global Keyboard Bindings (Direct and Robust)
+        self.root.bind_all("<Control-v>", lambda e: self.handle_paste())
+        self.root.bind_all("<Control-V>", lambda e: self.handle_paste())
+        self.root.bind_all("<Control-c>", lambda e: self.handle_copy())
+        self.root.bind_all("<Control-C>", lambda e: self.handle_copy())
+        self.root.bind_all("<Control-x>", lambda e: self.handle_cut())
+        self.root.bind_all("<Control-X>", lambda e: self.handle_cut())
+        self.root.bind_all("<Control-a>", lambda e: self.handle_select_all())
+        self.root.bind_all("<Control-A>", lambda e: self.handle_select_all())
 
         # Build UI
         self.create_header()
@@ -407,15 +408,20 @@ class StoreManagerApp:
     def on_mw(self, event):
         self.p_canvas.yview_scroll(int(-1*(event.delta/120)), "units")
 
-    def handle_paste(self, event=None):
+    def handle_paste(self):
         try:
             w = self.root.focus_get()
             if isinstance(w, (tk.Entry, tk.Text)):
-                w.event_generate("<<Paste>>")
+                # Directly get from clipboard to bypass virtual event issues
+                txt = self.root.clipboard_get()
+                if isinstance(w, tk.Entry):
+                    w.insert(tk.INSERT, txt)
+                else:
+                    w.insert(tk.INSERT, txt)
         except: pass
         return "break"
 
-    def handle_copy(self, event=None):
+    def handle_copy(self):
         try:
             w = self.root.focus_get()
             if isinstance(w, (tk.Entry, tk.Text)):
@@ -423,7 +429,7 @@ class StoreManagerApp:
         except: pass
         return "break"
 
-    def handle_cut(self, event=None):
+    def handle_cut(self):
         try:
             w = self.root.focus_get()
             if isinstance(w, (tk.Entry, tk.Text)):
@@ -431,7 +437,7 @@ class StoreManagerApp:
         except: pass
         return "break"
 
-    def handle_select_all(self, event=None):
+    def handle_select_all(self):
         try:
             w = self.root.focus_get()
             if isinstance(w, tk.Entry):
@@ -446,7 +452,7 @@ class StoreManagerApp:
         m = tk.Menu(w, tearoff=0, font=("Cairo", 10))
         m.add_command(label="نسخ (Copy)", command=lambda: w.event_generate("<<Copy>>"))
         m.add_command(label="قص (Cut)", command=lambda: w.event_generate("<<Cut>>"))
-        m.add_command(label="لصق (Paste)", command=lambda: w.event_generate("<<Paste>>"))
+        m.add_command(label="لصق (Paste)", command=self.handle_paste)
         m.add_separator()
         m.add_command(label="تحديد الكل (Select All)", command=self.handle_select_all)
         

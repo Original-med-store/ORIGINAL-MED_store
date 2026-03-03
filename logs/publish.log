@@ -1,1 +1,20 @@
 Tue 03/03/2026  2:42:54.12 - Atomic Sync Start 
+[main 9c3e7aa] Auto-update Tue 03/03/2026  2:42:54.47
+ 5 files changed, 86 insertions(+), 25 deletions(-)
+From https://github.com/Original-med-store/ORIGINAL-MED_store
+ * branch            main       -> FETCH_HEAD
+error: cannot pull with rebase: You have unstaged changes.
+error: Please commit or stash them.
+[RETRY] Detected rebase failure, attempt forced sync 
+warning: in the working copy of 'logs/publish.log', LF will be replaced by CRLF the next time Git touches it
+error: cannot pull with rebase: You have unstaged changes.
+error: additionally, your index contains uncommitted changes.
+error: Please commit or stash them.
+To https://github.com/Original-med-store/ORIGINAL-MED_store.git
+ ! [rejected]        main -> main (non-fast-forward)
+error: failed to push some refs to 'https://github.com/Original-med-store/ORIGINAL-MED_store.git'
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. If you want to integrate the remote changes,
+hint: use 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+[ERROR] 1 

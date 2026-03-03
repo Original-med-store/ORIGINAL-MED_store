@@ -2,37 +2,31 @@
 setlocal enabledelayedexpansion
 cd /d "%~dp0"
 
-:: Configuration
-if not exist "logs" mkdir "logs"
-set LOG_FILE=logs\publish.log
-echo %date% %time% - Atomic Sync Start > %LOG_FILE%
-
-:: Forced Cleanup of any previous failed state
+:: Initial cleanup to avoid rebase traps
 git rebase --abort >nul 2>&1
 git am --abort >nul 2>&1
 
-:: Aggressive Add and Commit
-git add -A >> %LOG_FILE% 2>&1
-git commit -m "Auto-update %date% %time%" >> %LOG_FILE% 2>&1
+:: Configure Git to ignore changes in logs if they made it to the index previously
+git rm --cached -r logs >nul 2>&1
 
-:: Fetch and Rebase with "Ours" strategy to prioritize local data files
-git fetch origin main >> %LOG_FILE% 2>&1
-git pull origin main --rebase -X ours >> %LOG_FILE% 2>&1
+:: Aggressive Prep
+git add . >> logs\publish.log 2>&1
+git commit -m "Auto-update %date% %time%" >> logs\publish.log 2>&1
 
-:: If still failed (due to unstaged changes during rebase), try one more time
-if %errorlevel% neq 0 (
-    echo [RETRY] Detected rebase failure, attempt forced sync >> %LOG_FILE%
-    git add -A >> %LOG_FILE% 2>&1
-    git pull origin main --rebase -X ours >> %LOG_FILE% 2>&1
-)
+:: Forced Fetch
+git fetch origin main >> logs\publish.log 2>&1
 
-:: Final Push
-git push origin main >> %LOG_FILE% 2>&1
+:: Attempt pull with rebase
+:: We use --autostash to handle ANY occasional dirty state
+git pull origin main --rebase --autostash -X ours >> logs\publish.log 2>&1
+
+:: Triple check push
+git push origin main >> logs\publish.log 2>&1
 
 if %errorlevel% equ 0 (
-    echo [SUCCESS] >> %LOG_FILE%
+    echo [SUCCESS] >> logs\publish.log
     exit /b 0
 ) else (
-    echo [ERROR] %errorlevel% >> %LOG_FILE%
+    echo [CRITICAL ERROR] >> logs\publish.log
     exit /b 1
 )
