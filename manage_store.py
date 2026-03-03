@@ -11,10 +11,13 @@ import time
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PRODUCTS_FILE = os.path.join(BASE_DIR, 'scripts', 'products.js')
 ASSETS_DIR = os.path.join(BASE_DIR, 'assets')
+# Use a local status log file
+LOG_FILE = os.path.join(BASE_DIR, 'sync_status.log')
+
 # Radical Log Isolation: Move logs out of the workspace to avoid Git/File-Lock deadlocks
 TEMP_LOG_DIR = os.path.join(os.environ.get('TEMP', BASE_DIR), 'original-med-logs')
 if not os.path.exists(TEMP_LOG_DIR): os.makedirs(TEMP_LOG_DIR)
-LOG_FILE = os.path.join(TEMP_LOG_DIR, 'publish_last.log')
+# The original LOG_FILE definition was here, but it's now defined above for local status.
 
 if not os.path.exists(ASSETS_DIR):
     os.makedirs(ASSETS_DIR)
@@ -401,8 +404,6 @@ class StoreManagerApp:
         except: pass
 
         self.refresh_product_table()
-        self.clear_p()
-
     def clear_p(self):
         self.name_var.set(""); self.curr_p_var.set(""); self.old_p_var.set(""); self.stock_var.set("")
         self.desc_box.delete("1.0", tk.END); self.selected_images = []; self.img_list.delete(0, tk.END)
@@ -415,18 +416,24 @@ class StoreManagerApp:
     def handle_paste(self):
         try:
             w = self.root.focus_get()
-            if isinstance(w, (tk.Entry, tk.Text)):
-                # Use Tcl's built-in clipboard selection for maximum compatibility
-                try:
-                    txt = self.root.selection_get(selection='CLIPBOARD')
-                    if isinstance(w, tk.Entry):
-                        w.insert(tk.INSERT, txt)
-                    else:
-                        w.insert(tk.INSERT, txt)
+            if not isinstance(w, (tk.Entry, tk.Text)): return "break"
+            
+            txt = ""
+            # Layer 1: Selection Board
+            try: txt = self.root.selection_get(selection='CLIPBOARD')
+            except:
+                # Layer 2: Clipboard Board
+                try: txt = self.root.clipboard_get()
                 except:
-                    # Fallback to root.clipboard_get()
-                    txt = self.root.clipboard_get()
-                    w.insert(tk.INSERT, txt)
+                    # Layer 3: Virtual Event fallback
+                    w.event_generate("<<Paste>>")
+                    return "break"
+            
+            if txt:
+                try:
+                    if w.selection_present(): w.delete(tk.SEL_FIRST, tk.SEL_LAST)
+                except: pass
+                w.insert(tk.INSERT, txt)
         except: pass
         return "break"
 
@@ -477,11 +484,7 @@ class StoreManagerApp:
         
         self.final_save()
         
-        # Radical recovery: Deleting any old log before starting
-        if os.path.exists(LOG_FILE):
-            try: os.remove(LOG_FILE)
-            except: pass
-
+        # Absolute path execution
         r = subprocess.run([sh], capture_output=True, text=True, creationflags=0x08000000)
         self.root.config(cursor="")
         
@@ -493,10 +496,10 @@ class StoreManagerApp:
         except: pass
 
         if r.returncode == 0:
-            messagebox.showinfo("نجاح", "تم الحفظ والنشر بنجاح على الموقع!")
+            messagebox.showinfo("نجاح", "تم النشر بنجاح على الموقع!")
         else:
             err_msg = r.stderr if r.stderr.strip() else (log_content if log_content.strip() else r.stdout)
-            messagebox.showerror("خطأ في النشر الجذري", f"تعذر النشر التلقائي. تفاصيل العملية:\n\n{err_msg}")
+            messagebox.showerror("خطأ في المزامنة", f"لم يكتمل النشر التلقائي. تفاصيل العملية:\n\n{err_msg}")
 
     def on_cat_click(self, e):
         sel = self.cat_list.curselection()
