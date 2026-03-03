@@ -1,0 +1,19 @@
+Tue 03/03/2026  3:19:48.01 - Background Sync Starting... 
+[main 3c4680b] Auto-sync Tue 03/03/2026  3:19:48.64
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+From https://github.com/Original-med-store/ORIGINAL-MED_store
+ * branch            main       -> FETCH_HEAD
+From https://github.com/Original-med-store/ORIGINAL-MED_store
+ * branch            main       -> FETCH_HEAD
+warning: in the working copy of 'sync_status.log', LF will be replaced by CRLF the next time Git touches it
+error: unable to unlink old 'sync_status.log': Invalid argument
+fatal: could not reset --hard
+Created autostash: 11fc1e0
+To https://github.com/Original-med-store/ORIGINAL-MED_store.git
+ ! [rejected]        main -> main (non-fast-forward)
+error: failed to push some refs to 'https://github.com/Original-med-store/ORIGINAL-MED_store.git'
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. If you want to integrate the remote changes,
+hint: use 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+[ERROR] 1 

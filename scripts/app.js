@@ -262,6 +262,11 @@ function filterAndSearch() {
             filtered.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
         } else if (sortValue === 'price-desc') {
             filtered.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+        } else if (sortValue === 'name-asc') {
+            filtered.sort((a, b) => a.name.localeCompare(b.name, 'ar'));
+        } else if (sortValue === 'default') {
+            // Default to ID descending (Recently Added)
+            filtered.sort((a, b) => b.id - a.id);
         }
     }
 
