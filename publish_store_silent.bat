@@ -2,29 +2,29 @@
 setlocal enabledelayedexpansion
 cd /d "%~dp0"
 
-:: Force cleanup of any stuck git states or offending logs
-git rebase --abort >nul 2>&1
-git rm -f publish.log store_publish.log >nul 2>&1
+:: Prepare
 if not exist "logs" mkdir "logs"
-
 set LOG_FILE=logs\publish.log
-echo %date% %time% - Starting atomic publish... > %LOG_FILE%
+echo %date% %time% - Atomic Sync Start > %LOG_FILE%
 
-:: Standard fetch and sync
-git fetch origin main >> %LOG_FILE% 2>&1
+:: Reset any failed rebase state
+git rebase --abort >nul 2>&1
+
+:: Commit changes IF any
 git add . >> %LOG_FILE% 2>&1
-git commit -m "Auto-update from Store Manager" >> %LOG_FILE% 2>&1
+git commit -m "Auto-update %date% %time%" >> %LOG_FILE% 2>&1
 
-:: Rebase with ours strategy for conflicts (logs/metadata)
+:: Pull & Rebase
+git fetch origin main >> %LOG_FILE% 2>&1
 git pull origin main --rebase -X ours >> %LOG_FILE% 2>&1
 
-:: Final Push
+:: Push
 git push origin main >> %LOG_FILE% 2>&1
 
 if %errorlevel% equ 0 (
-    echo %date% %time% - SUCCESS >> %LOG_FILE%
+    echo [SUCCESS] >> %LOG_FILE%
     exit /b 0
 ) else (
-    echo %date% %time% - FAILED >> %LOG_FILE%
+    echo [ERROR] %errorlevel% >> %LOG_FILE%
     exit /b 1
 )

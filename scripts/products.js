@@ -1,6 +1,4 @@
-// ==========================================
-//  ملف بيانات المنتجات (محدث)
-// ==========================================
+// Data
 var products = [
     {
         "id": 1,
@@ -76,9 +74,21 @@ var products = [
             "assets/day 4 screen 2.PNG"
         ],
         "id": 6
+    },
+    {
+        "name": "ءؤءؤ",
+        "price": 11,
+        "old_price": 222,
+        "stock": 3,
+        "description": "ءبيب",
+        "category_id": 1,
+        "images": [
+            "assets/3333.jpg"
+        ],
+        "image": "assets/3333.jpg",
+        "id": 7
     }
 ];
-
 var categories = [
     {
         "id": 1,
