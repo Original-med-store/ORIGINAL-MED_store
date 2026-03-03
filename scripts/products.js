@@ -63,6 +63,19 @@ var products = [
             "assets/day 4 screen 2.PNG"
         ],
         "id": 5
+    },
+    {
+        "name": "wwwwww",
+        "price": 22222,
+        "old_price": 333333,
+        "stock": null,
+        "description": "dfvcvcdvdc",
+        "category_id": 3,
+        "image": "assets/day 4 screen 2.PNG",
+        "images": [
+            "assets/day 4 screen 2.PNG"
+        ],
+        "id": 6
     }
 ];
 
