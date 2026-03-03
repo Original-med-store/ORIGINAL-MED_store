@@ -76,7 +76,7 @@ var products = [
     },
     {
         "name": "\u0621\u0624\u0621\u0624",
-        "price": 33333311,
+        "price": 11,
         "old_price": 222,
         "stock": 3,
         "description": "\u0621\u0628\u064a\u0628",
@@ -130,6 +130,28 @@ var products = [
         "images": [],
         "image": "",
         "id": 11
+    },
+    {
+        "name": "\u0634\u0627\u0634",
+        "price": 5,
+        "old_price": 3,
+        "stock": 0,
+        "description": "\u0649\u0628\u0644\u0644\u0627\u0628\u0631\u064a\u0644\u0627\u0649\u0644\u0627\u0644\u0627",
+        "category_id": 3,
+        "images": [],
+        "image": "",
+        "id": 12
+    },
+    {
+        "name": "\u0634\u0627\u0634",
+        "price": 5,
+        "old_price": 3,
+        "stock": 0,
+        "description": "\u0649\u0628\u0644\u0644\u0627\u0628\u0631\u064a\u0644\u0627\u0649\u0644\u0627\u0644\u0627",
+        "category_id": 3,
+        "images": [],
+        "image": "",
+        "id": 13
     }
 ];
 var categories = [
