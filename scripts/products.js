@@ -1,43 +1,8 @@
-var products = [
-    {
-        "name": "\u0634\u0627\u0634",
-        "price": 5,
-        "old_price": 3,
-        "stock": 0,
-        "description": "\u0649\u0628\u0644\u0644\u0627\u0628\u0631\u064a\u0644\u0627\u0649\u0644\u0627\u0644\u0627",
-        "category_id": 3,
-        "images": [],
-        "image": "",
-        "id": 13
-    },
-    {
-        "name": "\u062c\u0647\u0627\u0632 \u0633\u0643\u0631 \u0628\u0627\u064a\u0648 \u062a\u0633\u062a",
-        "price": 350,
-        "old_price": 430,
-        "stock": 0,
-        "description": "\u062c\u0647\u0627\u0632 \u0633\u0643\u0631 \u0628\u0627\u064a\u0648 \u062a\u064a\u0633\u062a \u0641\u0634\u064a\u062e",
-        "category_id": 1,
-        "images": [
-            "assets/images.jpeg"
-        ],
-        "image": "assets/images.jpeg",
-        "id": 14
-    }
-];
+var products = [];
 var categories = [
-    {
-        "id": 1,
-        "name": "\u0627\u062c\u0647\u0632\u0647 \u0633\u0643\u0631",
-        "image": "assets/ahmed Goda 2.PNG"
-    },
     {
         "id": 3,
         "name": "\u0645\u0646\u062a\u062c\u0627\u062a \u062e\u0627\u0635\u0629 \u0628\u0627\u0644\u0627\u0645\u0647\u0627\u062a \u0648\u0627\u0644\u0631\u0636\u0627\u0639\u0629",
-        "image": "assets/3333.jpg"
-    },
-    {
-        "id": 4,
-        "name": "\u064a\u064a\u064a\u064a\u064a\u064a",
         "image": "assets/3333.jpg"
     },
     {
@@ -58,11 +23,6 @@ var categories = [
     {
         "id": 8,
         "name": "\u0628\u0644\u0644\u0642\u0644\u0641\u0627\u06414\u0627\u0641\u0641\u0641",
-        "image": "https://via.placeholder.com/150"
-    },
-    {
-        "id": 9,
-        "name": "\u0628\u0644\u0644\u0642\u0644\u0641\u0627\u06414\u0627\u0641\u0641\u0641\u0628\u0628",
         "image": "https://via.placeholder.com/150"
     },
     {
