@@ -52,18 +52,6 @@ var products = [
         "description": ""
     },
     {
-        "id": 1787,
-        "name": "Bu510\u062c\u0647\u0627\u0632 \u0636\u063a\u0637 \u0645\u064a\u062f\u0633\u0627\u0646\u0627 \u0627\u0644\u0645\u0627\u0646\u0649\u0628\u0634\u0627\u062d\u0646",
-        "price": 1700.0,
-        "old_price": 1600.0,
-        "stock": 4.0,
-        "image": "",
-        "images": [],
-        "category_id": 30,
-        "category_name": "\u0623\u062c\u0647\u0632\u0629 \u0636\u063a\u0637 \u0648\u0645\u0633\u062a\u0644\u0632\u0645\u0627\u062a\u0647\u0627",
-        "description": ""
-    },
-    {
         "id": 1788,
         "name": "Bu510\u062c\u0647\u0627\u0632 \u0636\u063a\u0637 \u0645\u064a\u062f\u0633\u0627\u0646\u0627\u0627\u0644\u0645\u0627\u0646\u0649",
         "price": 1525.0,
@@ -17644,15 +17632,4 @@ var products = [
         "description": "nan"
     }
 ];
-var categories = [
-    {
-        "id": 26,
-        "name": "\u0628\u0644\u0627\u0633\u062a\u0631 \u0637\u0628\u064a",
-        "image": ""
-    },
-    {
-        "id": 15,
-        "name": "\u062c\u0628\u0633 \u0648\u0633\u0648\u0641\u062a \u0628\u0627\u0646\u062f",
-        "image": ""
-    }
-];
+var categories = [];
